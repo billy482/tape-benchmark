@@ -27,7 +27,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Wed, 09 Nov 2011 17:50:30 +0100                           *
+*  Last modified: Thu, 10 Nov 2011 12:56:24 +0100                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -195,7 +195,7 @@ int main(int argc, char ** argv) {
 
             case OPT_HELP:
             case '?':
-                printf("tape-benchmark\n");
+                printf("tape-benchmark (version: %s)\n", TAPEBENCHMARK_VERSION);
                 printf("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n", DEFAULT_DEVICE);
                 printf("  -h, --help                 : show this and quit\n");
                 convert_size(buffer_size, 16, MAX_BUFFER_SIZE);

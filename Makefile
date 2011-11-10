@@ -36,7 +36,7 @@ endif
 
 
 # compilation flags
-CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DEJECT_VERSION=\"${VERSION}\"
+CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\"
 LDFLAGS		:= -O2
 
 CSCOPE_OPT	:= -b -R -s src -U
