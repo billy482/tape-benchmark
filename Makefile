@@ -12,7 +12,7 @@ STRIP		:= ${TARGET}strip
 NAME		:= tape-benchmark
 BIN			:= bin/${NAME}
 DIR_NAME	:= $(lastword $(subst /, , $(realpath .)))
-VERSION		:= $(shell git describe)
+VERSION		:= $(shell ./script/version.pl)
 
 BUILD_DIR	:= build
 DEPEND_DIR	:= depend
