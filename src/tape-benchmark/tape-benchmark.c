@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 15 Nov 2011 11:37:51 +0100                           *
+*  Last modified: Tue, 15 Nov 2011 11:42:22 +0100                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -190,7 +190,7 @@ int main(int argc, char ** argv) {
 
             case OPT_HELP:
             case '?':
-                printf("tape-benchmark (version: %s)\n", TAPEBENCHMARK_VERSION);
+                printf("tape-benchmark (%s)\n", TAPEBENCHMARK_VERSION);
                 printf("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n", DEFAULT_DEVICE);
                 printf("  -h, --help                 : show this and quit\n");
                 convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
