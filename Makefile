@@ -29,13 +29,15 @@ DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 
 INCLUDE_DIR	:=
 
+SRC_SUMS    := $(shell cat ${SRC_FILES} ${HEAD_FILES} | sha1sum - | cut -d ' ' -f 1)
+
 ifeq (${SRC_FILES},)
 $(error no source files found)
 endif
 
 
 # compilation flags
-CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\"
+CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\" -DTAPEBENCHMARK_SRCSUM=\"${SRC_SUMS}\"
 LDFLAGS		:= -O2
 
 CSCOPE_OPT	:= -b -R -s src -U
