@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Wed, 16 Nov 2011 18:02:16 +0100                           *
+*  Last modified: Sun, 20 Nov 2011 13:11:49 +0100                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -38,6 +38,8 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+
+#include "cksum.tape-benchmark"
 
 #define DEFAULT_BUFFER_SIZE 16777216L
 #define DEFAULT_DEVICE "/dev/nst0"

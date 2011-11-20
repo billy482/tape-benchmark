@@ -19,6 +19,7 @@ DEPEND_DIR	:= depend
 
 SRC_FILES	:= $(sort $(shell test -d src && find src -name '*.c'))
 HEAD_FILES	:= $(sort $(shell test -d include -a src && find include src -name '*.h'))
+SRC_CKSUM   := cksum.${NAME}
 
 OBJ_FILES	:= $(sort $(patsubst src/%.c,${BUILD_DIR}/%.o,${SRC_FILES}))
 DEP_FILES	:= $(sort $(shell test -d ${DEPEND_DIR} && find ${DEPEND_DIR} -name '*.d'))
@@ -27,7 +28,7 @@ BIN_DIRS	:= $(sort $(dir ${BIN}))
 OBJ_DIRS	:= $(sort $(dir ${OBJ_FILES}))
 DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 
-INCLUDE_DIR	:=
+INCLUDE_DIR	:= -I.
 
 SRC_SUMS    := $(shell cat ${SRC_FILES} ${HEAD_FILES} | sha1sum - | cut -d ' ' -f 1)
 
@@ -37,7 +38,7 @@ endif
 
 
 # compilation flags
-CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\" -DTAPEBENCHMARK_SRCSUM=\"${SRC_SUMS}\"
+CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\"
 LDFLAGS		:= -O2
 
 CSCOPE_OPT	:= -b -R -s src -U
@@ -67,6 +68,7 @@ distclean realclean: clean
 	@rm -Rf ${BIN} ${BIN}.debug cscope.out ${DEPEND_DIR} tags
 
 prepare: ${BIN_DIRS} ${DEP_DIRS} ${OBJ_DIRS}
+	@./script/checksum.pl ${SRC_CKSUM} ${SRC_FILES} ${HEAD_FILES}
 
 rebuild: clean all
 

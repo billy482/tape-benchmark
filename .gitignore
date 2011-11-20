@@ -1,5 +1,6 @@
 bin
 build
+cksum.*
 cscope.out
 depend
 tags
