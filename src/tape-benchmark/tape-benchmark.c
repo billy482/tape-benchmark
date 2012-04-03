@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 20 Nov 2011 13:11:49 +0100                           *
+*  Last modified: Tue, 03 Apr 2012 18:03:25 +0200                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -143,7 +143,7 @@ ssize_t parse_size(const char * size) {
 			if (mult == ' ')
 				continue;
 
-			return 1 << lsize;
+			return 1L << lsize;
 		}
 	}
 
