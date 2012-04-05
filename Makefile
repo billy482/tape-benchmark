@@ -31,6 +31,7 @@ DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 INCLUDE_DIR	:= -I.
 
 SRC_SUMS    := $(shell cat ${SRC_FILES} ${HEAD_FILES} | sha1sum - | cut -d ' ' -f 1)
+GIT_COMMIT  := $(shell git log -1 --format=%H)
 
 ifeq (${SRC_FILES},)
 $(error no source files found)
@@ -38,7 +39,7 @@ endif
 
 
 # compilation flags
-CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\"
+CFLAGS		:= -pipe -Os -ggdb3 -Wall -Wextra ${INCLUDE_DIR} -DTAPEBENCHMARK_VERSION=\"${VERSION}\" -DTAPEBENCHMARK_GIT_COMMIT=\"${GIT_COMMIT}\"
 LDFLAGS		:= -O2
 
 CSCOPE_OPT	:= -b -R -s src -U

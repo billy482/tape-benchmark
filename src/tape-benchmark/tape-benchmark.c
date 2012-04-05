@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 03 Apr 2012 18:03:25 +0200                           *
+*  Last modified: Thu, 05 Apr 2012 20:51:23 +0200                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -241,6 +241,7 @@ int main(int argc, char ** argv) {
 			case OPT_VERSION:
 				printf("tape-benchmark (%s, date and time : %s %s)\n", TAPEBENCHMARK_VERSION, __DATE__, __TIME__);
 				printf("checksum of source code: %s\n", TAPEBENCHMARK_SRCSUM);
+				printf("git commit: %s\n", TAPEBENCHMARK_GIT_COMMIT);
 				return 0;
 		}
 	}
