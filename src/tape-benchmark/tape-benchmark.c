@@ -61,34 +61,40 @@ int check_size(ssize_t size) {
 	return 1;
 }
 
-void convert_size(char * buffer, unsigned int bufferSize, ssize_t size) {
+void convert_size(char * str, unsigned int str_len, ssize_t size) {
 	unsigned short mult = 0;
 	double tsize = size;
 
-	while (tsize >= 1024 && mult < 4) {
+	while (tsize >= 8192 && mult < 4) {
 		tsize /= 1024;
 		mult++;
 	}
 
+	int fixed = 0;
+	if (tsize < 10)
+		fixed = 2;
+	else if (tsize < 100)
+		fixed = 1;
+
 	switch (mult) {
 		case 0:
-			snprintf(buffer, bufferSize, "%zd Bytes", size);
+			snprintf(str, str_len, "%zd Bytes", size);
 			break;
 		case 1:
-			snprintf(buffer, bufferSize, "%.1f KBytes", tsize);
+			snprintf(str, str_len, "%.*f KBytes", fixed, tsize);
 			break;
 		case 2:
-			snprintf(buffer, bufferSize, "%.2f MBytes", tsize);
+			snprintf(str, str_len, "%.*f MBytes", fixed, tsize);
 			break;
 		case 3:
-			snprintf(buffer, bufferSize, "%.3f GBytes", tsize);
+			snprintf(str, str_len, "%.*f GBytes", fixed, tsize);
 			break;
 		default:
-			snprintf(buffer, bufferSize, "%.4f TBytes", tsize);
+			snprintf(str, str_len, "%.*f TBytes", fixed, tsize);
 	}
 
-	if (strchr(buffer, '.')) {
-		char * ptrEnd = strchr(buffer, ' ');
+	if (strchr(str, '.') != NULL) {
+		char * ptrEnd = strchr(str, ' ');
 		char * ptrBegin = ptrEnd - 1;
 		while (*ptrBegin == '0')
 			ptrBegin--;
@@ -278,6 +284,9 @@ int main(int argc, char ** argv) {
 	close(fd_ran);
 	printf(", done\n");
 
+	static char clean_line[64];
+	memset(clean_line, ' ', 64);
+
 	ssize_t write_size;
 	for (write_size = min_buffer_size; write_size <= max_buffer_size; write_size <<= 1) {
 		if (current_block_size > 0) {
@@ -304,14 +313,18 @@ int main(int argc, char ** argv) {
 				printf("\n");
 		}
 
-		struct timeval start;
-		gettimeofday(&start, 0);
-		struct tm * tv = localtime(&start.tv_sec);
+		struct timeval time_start;
+		gettimeofday(&time_start, 0);
+		struct tm * tv = localtime(&time_start.tv_sec);
 		char buf[32];
 		strftime(buf, 32, "%F %T", tv);
 		ssize_t nb_loop = size / write_size;
 		convert_size(buffer_size, 16, write_size);
 		printf("Starting at %s, nb loop: %zd, block size: %s\n", buf, nb_loop, buffer_size);
+
+		struct timespec start, last, current;
+		clock_gettime(CLOCK_MONOTONIC, &start);
+		last = start;
 
 		int write_error = 0;
 		for (i = 0; i < nb_loop; i++) {
@@ -320,26 +333,44 @@ int main(int argc, char ** argv) {
 				switch (errno) {
 					case EINVAL:
 						convert_size(buffer_size, 16, write_size >> 1);
-						printf("It seems that you cannot use a block size greater than %s\n", buffer_size);
+						printf("\rIt seems that you cannot use a block size greater than %s\n", buffer_size);
 						break;
 
 					case EBUSY:
-						printf("Device is busy, so we wait a few seconds before restarting\n");
+						printf("\rDevice is busy, so we wait a few seconds before restarting\n");
 						sleep(8);
 
-						gettimeofday(&start, 0);
+						gettimeofday(&time_start, 0);
+						clock_gettime(CLOCK_MONOTONIC, &start);
 						strftime(buf, 32, "%F %T", tv);
-						printf("Restarting at %s, nb loop: %zd, block size: %s\n", buf, nb_loop, buffer_size);
+						printf("\rRestarting at %s, nb loop: %zd, block size: %s\n", buf, nb_loop, buffer_size);
 						i = -1;
 						break;
 
 					default:
-						printf("Oops: an error occured => (%d) %m\n", errno);
+						printf("\rOops: an error occured => (%d) %m\n", errno);
 						printf("fd: %d, buffer: %p, count: %zd\n", fd_tape, buffer[i & 0x1F], write_size);
 						break;
 				}
 				write_error = 1;
 				break;
+			}
+
+			clock_gettime(CLOCK_MONOTONIC, &current);
+
+			if (last.tv_sec + 5 <= current.tv_sec) {
+				float pct = 100 * i;
+				double time_spent = difftime(current.tv_sec, start.tv_sec);
+				double speed = i * write_size;
+				speed /= time_spent;
+
+				static int last_width = 64;
+				printf("\r%*s\r", last_width, clean_line);
+
+				convert_size(buffer_size, 16, speed);
+				printf("loop: %lld, current speed %s, done: %.2f%%%n", i, buffer_size, pct / nb_loop, &last_width);
+				fflush(stdout);
+				clock_gettime(CLOCK_MONOTONIC, &last);
 			}
 		}
 
@@ -348,12 +379,14 @@ int main(int argc, char ** argv) {
 		tv = localtime(&end.tv_sec);
 		strftime(buf, 32, "%F %T", tv);
 
-		double time_spent = difftime(end.tv_sec, start.tv_sec) + difftime(end.tv_usec, start.tv_usec) / 1000000;
+		clock_gettime(CLOCK_MONOTONIC, &current);
+
+		double time_spent = difftime(current.tv_sec, start.tv_sec);
 		double speed = i * write_size;
 		speed /= time_spent;
 
 		convert_size(buffer_size, 16, speed);
-		printf("Finished at %s, current speed %s\n", buf, buffer_size);
+		printf("\rFinished at %s, current speed %s\n", buf, buffer_size);
 
 		struct mtget mt2;
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
