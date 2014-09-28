@@ -276,7 +276,7 @@ int main(int argc, char ** argv) {
 
 	if (GMT_WR_PROT(mt.mt_gstat)) {
 		close(fd_tape);
-		printf("\nOops: \"%s\" Write lock enabled\n", device);
+		printf("\nOops: Write lock enabled\n");
 		return 3;
 	}
 
