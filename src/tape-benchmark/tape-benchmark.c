@@ -22,21 +22,36 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 28 Sep 2014 13:28:26 +0200                           *
+*  Last modified: Sun, 28 Sep 2014 23:13:43 +0200                           *
 \***************************************************************************/
 
+// errno
 #include <errno.h>
+// open
 #include <fcntl.h>
+// getopt_long
 #include <getopt.h>
+// poll
 #include <poll.h>
+// fflush, printf, sscanf, snprintf
 #include <stdio.h>
+// malloc
 #include <stdlib.h>
+// memmove, memset, strlen, strrchr
 #include <string.h>
+// ioctl
+#include <sys/ioctl.h>
+// GMT_WR_PROT, MTIOCGET, MT_ST_BLKSIZE_MASK, MT_ST_BLKSIZE_SHIFT
 #include <sys/mtio.h>
+// open
 #include <sys/stat.h>
+// gettimeofday
 #include <sys/time.h>
+// open
 #include <sys/types.h>
+// clock_gettime, difftime, localtime, strftime
 #include <time.h>
+// close, read, sleep, write
 #include <unistd.h>
 
 #include "tape-benchmark.version"
