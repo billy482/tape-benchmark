@@ -270,10 +270,16 @@ int main(int argc, char ** argv) {
 	struct mtget mt;
 	int failed = ioctl(fd_tape, MTIOCGET, &mt);
 
-	if (failed) {
+	if (failed != 0) {
 		close(fd_tape);
 		printf("Oops: \"%s\" seem to be a not valid tape device\n", device);
 		return 2;
+	}
+
+	if (GMT_WR_PROT(mt.mt_gstat)) {
+		close(fd_tape);
+		printf("Oops: \"%s\" Write lock enabled\n", device);
+		return 3;
 	}
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
