@@ -42,9 +42,9 @@
 #include "tape-benchmark.version"
 #include "tape-benchmark.chcksum"
 
-#define DEFAULT_BUFFER_SIZE 16777216L
+#define DEFAULT_SIZE 1073741824L
 #define DEFAULT_DEVICE "/dev/nst0"
-#define MIN_BUFFER_SIZE 4096L
+#define MIN_BUFFER_SIZE 16384L
 #define MAX_BUFFER_SIZE 262144L
 
 static int check_size(ssize_t size);
@@ -165,7 +165,7 @@ int main(int argc, char ** argv) {
 	char * buffer[32];
 	char buffer_size[16];
 	char * device = DEFAULT_DEVICE;
-	ssize_t size = DEFAULT_BUFFER_SIZE;
+	ssize_t size = DEFAULT_SIZE;
 
 	ssize_t max_buffer_size = MAX_BUFFER_SIZE;
 	ssize_t min_buffer_size = MIN_BUFFER_SIZE;
@@ -193,7 +193,7 @@ int main(int argc, char ** argv) {
 
 	static int lo;
 	for (;;) {
-		int c = getopt_long(argc, argv, "d:hm:M:s:?V", op, &lo);
+		int c = getopt_long(argc, argv, "d:hm:M:s:V?", op, &lo);
 
 		if (c == -1)
 			break;
@@ -212,7 +212,7 @@ int main(int argc, char ** argv) {
 				printf("  -M, --max-buffer-size=SIZE : maximum buffer size (instead of %s)\n", buffer_size);
 				convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
 				printf("  -m, --min-buffer-size=SIZE : minimum buffer size (instead of %s)\n", buffer_size);
-				convert_size(buffer_size, 16, DEFAULT_BUFFER_SIZE);
+				convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf("  -s, --size=SIZE            : size of file (default: %s)\n\n", buffer_size);
 
 				printf("SIZE can be specified with (BKGT)\n");
