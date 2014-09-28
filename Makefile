@@ -57,7 +57,7 @@ check:
 	@${GCC} -fsyntax-only ${CFLAGS} ${SRC_FILES}
 
 clean:
-	@echo " [ RM      ] ${BUILD_DIR}"
+	@echo " RM       ${BUILD_DIR}"
 	@rm -Rf ${BUILD_DIR}
 
 cscope: cscope.out
@@ -65,7 +65,7 @@ cscope: cscope.out
 ctags TAGS: tags
 
 distclean realclean: clean
-	@echo " [ RM      ] ${BIN} ${BIN}.debug cscope.out ${DEPEND_DIR} tags"
+	@echo " RM       ${BIN} ${BIN}.debug cscope.out ${DEPEND_DIR} tags"
 	@rm -Rf ${BIN} ${BIN}.debug cscope.out ${DEPEND_DIR} tags
 
 prepare: ${BIN_DIRS} ${DEP_DIRS} ${OBJ_DIRS}
@@ -85,7 +85,7 @@ tar: ${NAME}.tar.bz2
 
 # real target
 ${BIN}: ${OBJ_FILES}
-	@echo " [ LD      ] $@"
+	@echo " LD       $@"
 	@${GCC} -o ${BIN} ${OBJ_FILES} ${CFLAGS} ${LDFLAGS}
 	@${OBJCOPY} --only-keep-debug $@ $@.debug
 	@${STRIP} $@
@@ -93,23 +93,23 @@ ${BIN}: ${OBJ_FILES}
 	@chmod -x $@.debug
 
 ${BIN_DIRS} ${DEP_DIRS} ${OBJ_DIRS}:
-	@echo " [ MKDIR   ] $@"
+	@echo " MKDIR    $@"
 	@mkdir -p $@
 
 ${NAME}.tar.bz2:
 	git archive --format=tar --prefix=${DIR_NAME}/ master | bzip2 -9c > $@
 
 cscope.out: ${SRC_FILES}
-	@echo " [ CSCOPE  ]"
+	@echo " CSCOPE  "
 	@${CSCOPE} ${CSCOPE_OPT}
 
 tags: ${SRC_FILES} ${HEAD_FILES}
-	@echo " [ CTAGS   ]"
+	@echo " CTAGS   "
 	@${CTAGS} -R src
 
 # implicit target
 ${BUILD_DIR}/%.o: src/%.c
-	@echo " [ CC      ] $@"
+	@echo " CC       $@"
 	@${GCC} -c ${CFLAGS} -Wp,-MD,${DEPEND_DIR}/$*.d,-MT,$@ -o $@ $<
 
 ifneq (${DEP_FILES},)
