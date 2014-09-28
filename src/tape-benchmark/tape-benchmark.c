@@ -21,8 +21,8 @@
 *  along with this program.  If not, see <http://www.gnu.org/licenses/>.    *
 *                                                                           *
 *  -----------------------------------------------------------------------  *
-*  Copyright (C) 2011, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Thu, 05 Apr 2012 20:51:23 +0200                           *
+*  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
+*  Last modified: Wed, 07 May 2014 19:34:16 +0200                           *
 \***************************************************************************/
 
 #include <errno.h>
