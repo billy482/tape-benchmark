@@ -259,12 +259,10 @@ int main(int argc, char ** argv) {
 
 	printf("Openning \"%s\"", device);
 	fflush(stdout);
-	int fd_tape = open(device, O_WRONLY);
+	int fd_tape = open(device, O_RDONLY);
 	if (fd_tape < 0) {
 		printf(", failed!!!");
 		return 1;
-	} else {
-		printf(", fd: %d\n", fd_tape);
 	}
 
 	struct mtget mt;
@@ -272,14 +270,24 @@ int main(int argc, char ** argv) {
 
 	if (failed != 0) {
 		close(fd_tape);
-		printf("Oops: \"%s\" seem to be a not valid tape device\n", device);
+		printf("\nOops: \"%s\" seem to be a not valid tape device\n", device);
 		return 2;
 	}
 
 	if (GMT_WR_PROT(mt.mt_gstat)) {
 		close(fd_tape);
-		printf("Oops: \"%s\" Write lock enabled\n", device);
+		printf("\nOops: \"%s\" Write lock enabled\n", device);
 		return 3;
+	}
+
+	failed = close(fd_tape);
+
+	fd_tape = open(device, O_WRONLY);
+	if (fd_tape < 0) {
+		printf(", failed!!!");
+		return 2;
+	} else {
+		printf(", fd: %d\n", fd_tape);
 	}
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
