@@ -1,0 +1,8 @@
+TAPEBENCHMARK_SRC_DIR		:= src/tape-benchmark
+
+TAPEBENCHMARK_BIN			:= bin/tape-benchmark
+TAPEBENCHMARK_LD			:=
+
+TAPEBENCHMARK_CHCKSUM_FILE	:= tape-benchmark.chcksum
+
+BIN_SYMS					+= TAPEBENCHMARK

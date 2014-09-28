@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Wed, 07 May 2014 19:34:16 +0200                           *
+*  Last modified: Sun, 28 Sep 2014 13:28:26 +0200                           *
 \***************************************************************************/
 
 #include <errno.h>
@@ -39,14 +39,19 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "cksum.tape-benchmark"
+#include "tape-benchmark.version"
+#include "tape-benchmark.chcksum"
 
 #define DEFAULT_BUFFER_SIZE 16777216L
 #define DEFAULT_DEVICE "/dev/nst0"
 #define MIN_BUFFER_SIZE 4096L
 #define MAX_BUFFER_SIZE 262144L
 
-int check_size(ssize_t size) {
+static int check_size(ssize_t size);
+static void convert_size(char * str, unsigned int str_len, ssize_t size);
+static ssize_t parse_size(const char * size);
+
+static int check_size(ssize_t size) {
 	int i = 0;
 	ssize_t tsize = size;
 
@@ -61,7 +66,7 @@ int check_size(ssize_t size) {
 	return 1;
 }
 
-void convert_size(char * str, unsigned int str_len, ssize_t size) {
+static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 	unsigned short mult = 0;
 	double tsize = size;
 
@@ -106,7 +111,7 @@ void convert_size(char * str, unsigned int str_len, ssize_t size) {
 	}
 }
 
-ssize_t parse_size(const char * size) {
+static ssize_t parse_size(const char * size) {
 	double dsize = 0;
 	ssize_t lsize = 0;
 	char mult = '\0';

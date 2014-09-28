@@ -1,6 +1,8 @@
 bin
 build
-cksum.*
+checksum/
 cscope.out
 depend
 tags
+tape-benchmark.version
+.*.sw?
