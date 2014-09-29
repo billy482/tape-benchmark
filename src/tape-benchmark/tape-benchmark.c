@@ -203,7 +203,7 @@ int main(int argc, char ** argv) {
 				printf("  -m, --min-buffer-size=SIZE : minimum buffer size (instead of %s)\n", buffer_size);
 				convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf("  -s, --size=SIZE            : size of file (default: %s)\n", buffer_size);
-				printf("  -r, --no-rewind            : no rewind tape between step\n");
+				printf("  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n");
 				printf("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n");
 
 				printf("SIZE can be specified with (BKGT)\n");
@@ -457,7 +457,7 @@ int main(int argc, char ** argv) {
 			break;
 		}
 
-		if (no_rewind) {
+		if (!no_rewind) {
 			if (mt.mt_fileno < 2) {
 				rewind_tape(fd_tape);
 			} else {
@@ -472,7 +472,6 @@ int main(int argc, char ** argv) {
 					printf("done\n");
 			}
 		}
-
 
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
 		if (failed)
