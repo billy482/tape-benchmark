@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 28 Sep 2014 23:13:43 +0200                           *
+*  Last modified: Mon, 29 Sep 2014 23:10:58 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -33,9 +33,11 @@
 #include <getopt.h>
 // poll
 #include <poll.h>
+// va_end, va_start
+#include <stdarg.h>
 // bool
 #include <stdbool.h>
-// fflush, printf, sscanf, snprintf
+// fflush, printf, sscanf, snprintf, vprintf
 #include <stdio.h>
 // malloc
 #include <stdlib.h>
@@ -67,6 +69,8 @@
 static bool check_size(ssize_t size);
 static void convert_size(char * str, unsigned int str_len, ssize_t size);
 static ssize_t parse_size(const char * size);
+static void print_flush(const char * format, ...) __attribute__((format(printf, 1, 2)));
+static void print_time(void);
 static bool rewind_tape(int fd);
 
 /**
@@ -141,9 +145,9 @@ static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 }
 
 int main(int argc, char ** argv) {
-	char * buffer[32];
-	char buffer_size[16];
-	char * device = DEFAULT_DEVICE;
+	static char * buffer[32];
+	static char buffer_size[16];
+	const char * device = DEFAULT_DEVICE;
 	ssize_t size = DEFAULT_SIZE;
 	bool rewind = false;
 
@@ -162,15 +166,15 @@ int main(int argc, char ** argv) {
 	};
 
 	static struct option op[] = {
-		{"device",          1, 0, OPT_DEVICE},
-		{"help",            0, 0, OPT_HELP},
-		{"max-buffer-size", 1, 0, OPT_MAX_BUFFER},
-		{"min-buffer-size", 1, 0, OPT_MIN_BUFFER},
-		{"size",            1, 0, OPT_SIZE},
-		{"rewind-at-start", 0, 0, OPT_REWIND},
-		{"version",         0, 0, OPT_VERSION},
+		{ "device",          1, 0, OPT_DEVICE },
+		{ "help",            0, 0, OPT_HELP },
+		{ "max-buffer-size", 1, 0, OPT_MAX_BUFFER },
+		{ "min-buffer-size", 1, 0, OPT_MIN_BUFFER },
+		{ "size",            1, 0, OPT_SIZE },
+		{ "rewind-at-start", 0, 0, OPT_REWIND },
+		{ "version",         0, 0, OPT_VERSION },
 
-		{0, 0, 0, 0},
+		{ 0, 0, 0, 0 },
 	};
 
 	static int lo;
@@ -187,8 +191,8 @@ int main(int argc, char ** argv) {
 
 			case OPT_HELP:
 			case '?':
-				printf("tape-benchmark (%s)\n", TAPEBENCHMARK_VERSION);
-				printf("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n", DEFAULT_DEVICE);
+				printf("tape-benchmark (" TAPEBENCHMARK_VERSION ")\n");
+				printf("  -d, --device=DEV           : use this device DEV instead of \"" DEFAULT_DEVICE "\"\n");
 				printf("  -h, --help                 : show this and quit\n");
 				convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
 				printf("  -M, --max-buffer-size=SIZE : maximum buffer size (instead of %s)\n", buffer_size);
@@ -237,33 +241,32 @@ int main(int argc, char ** argv) {
 				break;
 
 			case OPT_VERSION:
-				printf("tape-benchmark (%s, date and time : %s %s)\n", TAPEBENCHMARK_VERSION, __DATE__, __TIME__);
-				printf("checksum of source code: %s\n", TAPEBENCHMARK_SRCSUM);
-				printf("git commit: %s\n", TAPEBENCHMARK_GIT_COMMIT);
+				printf("tape-benchmark (" TAPEBENCHMARK_VERSION ", date and time : " __DATE__ " " __TIME__ ")\n");
+				printf("checksum of source code: " TAPEBENCHMARK_SRCSUM "\n");
+				printf("git commit: " TAPEBENCHMARK_GIT_COMMIT "\n");
 				return 0;
 		}
 	}
 
-	printf("Openning \"%s\"", device);
-	fflush(stdout);
+	print_time();
+	print_flush("Openning \"%s\"... ", device);
 	int fd_tape = open(device, O_RDONLY);
 	if (fd_tape < 0) {
-		printf(", failed!!!");
+		printf("failed!!!, because %m\n");
 		return 2;
 	}
 
 	struct mtget mt;
 	int failed = ioctl(fd_tape, MTIOCGET, &mt);
-
 	if (failed != 0) {
 		close(fd_tape);
-		printf("\nOops: \"%s\" seem to be a not valid tape device\n", device);
+		printf("Oops: seem not to be a valid tape device\n");
 		return 2;
 	}
 
 	if (GMT_WR_PROT(mt.mt_gstat)) {
 		close(fd_tape);
-		printf("\nOops: Write lock enabled\n");
+		printf("Oops: Write lock enabled\n");
 		return 2;
 	}
 
@@ -271,10 +274,10 @@ int main(int argc, char ** argv) {
 
 	fd_tape = open(device, O_WRONLY);
 	if (fd_tape < 0) {
-		printf(", failed!!!");
+		printf("failed!!!, because %m\n");
 		return 2;
 	} else {
-		printf(", fd: %d\n", fd_tape);
+		printf("fd: %d\n", fd_tape);
 	}
 
 	if (rewind && !rewind_tape(fd_tape))
@@ -282,36 +285,36 @@ int main(int argc, char ** argv) {
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
-	printf("Generate random data from \"/dev/urandom\"");
-	fflush(stdout);
+	print_time();
+	print_flush("Generate random data from \"/dev/urandom\"... ");
 	int fd_ran = open("/dev/urandom", O_RDONLY);
 	if (fd_ran < 0) {
-		printf("Failed to open \"/dev/urandom\" because %m\n");
+		printf("Failed to open because %m\n");
 		close(fd_tape);
 		return 2;
 	}
 
-	long long int i;
-	for (i = 0; i < 32; i++) {
-		buffer[i] = malloc(max_buffer_size);
-		if (buffer[i] == NULL) {
+	int j;
+	for (j = 0; j < 32; j++) {
+		buffer[j] = malloc(max_buffer_size);
+		if (buffer[j] == NULL) {
 			printf("Error: failed to allocated memory (size: %zd) because %m\n", max_buffer_size);
 			close(fd_tape);
 			close(fd_ran);
 			return 3;
 		}
 
-		ssize_t nb_read = read(fd_ran, buffer[i], max_buffer_size);
+		ssize_t nb_read = read(fd_ran, buffer[j], max_buffer_size);
 		if (nb_read < 0)
-			printf("Warning: failed to read from \"/dev/urandom\" because %m\n");
+			printf("\nWarning: failed to read from \"/dev/urandom\" because %m\n");
 		else if (nb_read < max_buffer_size)
-			printf("Warning: read less than expected, %zd instead of %zd\n", nb_read, max_buffer_size);
+			printf("\nWarning: read less than expected, %zd instead of %zd\n", nb_read, max_buffer_size);
 	}
 	close(fd_ran);
-	printf(", done\n");
+	printf("done\n");
 
-	static char clean_line[64];
-	memset(clean_line, ' ', 64);
+	static char clean_line[256];
+	memset(clean_line, ' ', 256);
 
 	ssize_t write_size;
 	for (write_size = min_buffer_size; write_size <= max_buffer_size; write_size <<= 1) {
@@ -340,41 +343,46 @@ int main(int argc, char ** argv) {
 		}
 
 		struct timeval time_start;
-		gettimeofday(&time_start, 0);
-		struct tm * tv = localtime(&time_start.tv_sec);
-		char buf[32];
-		strftime(buf, 32, "%F %T", tv);
+		gettimeofday(&time_start, NULL);
+
 		ssize_t nb_loop = size / write_size;
 		convert_size(buffer_size, 16, write_size);
-		printf("Starting at %s, nb loop: %zd, block size: %s\n", buf, nb_loop, buffer_size);
+
+		print_time();
+		printf("Starting, nb loop: %zd, block size: %s\n", nb_loop, buffer_size);
 
 		struct timespec start, last, current;
 		clock_gettime(CLOCK_MONOTONIC, &start);
 		last = start;
 
 		int write_error = 0;
+		long long int i;
+		static int last_width = 0;
 		for (i = 0; i < nb_loop; i++) {
 			ssize_t nb_write = write(fd_tape, buffer[i & 0x1F], write_size);
 			if (nb_write < 0) {
+				if (last_width > 0)
+					printf("\r%*s\r", last_width, clean_line);
+
 				switch (errno) {
 					case EINVAL:
 						convert_size(buffer_size, 16, write_size >> 1);
-						printf("\rIt seems that you cannot use a block size greater than %s\n", buffer_size);
+						printf("It seems that you cannot use a block size greater than %s\n", buffer_size);
 						break;
 
 					case EBUSY:
-						printf("\rDevice is busy, so we wait a few seconds before restarting\n");
+						printf("rDevice is busy, so we wait a few seconds before restarting\n");
 						sleep(8);
 
-						gettimeofday(&time_start, 0);
-						clock_gettime(CLOCK_MONOTONIC, &start);
-						strftime(buf, 32, "%F %T", tv);
-						printf("\rRestarting at %s, nb loop: %zd, block size: %s\n", buf, nb_loop, buffer_size);
+						print_time();
+						printf("Restarting, nb loop: %zd, block size: %s\n", nb_loop, buffer_size);
 						i = -1;
+
+						clock_gettime(CLOCK_MONOTONIC, &start);
 						break;
 
 					default:
-						printf("\rOops: an error occured => (%d) %m\n", errno);
+						printf("Oops: an error occured => (%d) %m\n", errno);
 						printf("fd: %d, buffer: %p, count: %zd\n", fd_tape, buffer[i & 0x1F], write_size);
 						break;
 				}
@@ -389,65 +397,73 @@ int main(int argc, char ** argv) {
 				double time_spent = difftime(current.tv_sec, start.tv_sec);
 				double speed = i * write_size;
 				speed /= time_spent;
-
-				static int last_width = 64;
-				printf("\r%*s\r", last_width, clean_line);
-
 				convert_size(buffer_size, 16, speed);
+
+				printf("\r%*s\r", last_width, clean_line);
 				printf("loop: %lld, current speed %s, done: %.2f%%%n", i, buffer_size, pct / nb_loop, &last_width);
 				fflush(stdout);
-				clock_gettime(CLOCK_MONOTONIC, &last);
+
+				current = last;
 			}
 		}
 
+		printf("\r%*s\r", last_width, clean_line);
+
 		struct timeval end;
 		gettimeofday(&end, 0);
-		tv = localtime(&end.tv_sec);
-		strftime(buf, 32, "%F %T", tv);
 
 		clock_gettime(CLOCK_MONOTONIC, &current);
 
 		double time_spent = difftime(current.tv_sec, start.tv_sec);
 		double speed = i * write_size;
 		speed /= time_spent;
-
 		convert_size(buffer_size, 16, speed);
-		printf("\rFinished at %s, current speed %s\n", buf, buffer_size);
+
+		print_time();
+		printf("Finished, current speed %s\n", buffer_size);
 
 		struct mtget mt2;
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
-		if (failed)
+		if (failed != 0) {
 			printf("MTIOCGET failed => %m\n");
+			break;
+		}
 
 		struct mtop eof = { MTWEOF, 1 };
 		failed = ioctl(fd_tape, MTIOCTOP, &eof);
-		if (failed)
+		if (failed != 0) {
 			printf("Weof failed => %m\n");
+			break;
+		}
 
 		struct mtop nop = { MTNOP, 1 };
 		failed = ioctl(fd_tape, MTIOCTOP, &nop);
-		if (failed)
+		if (failed != 0) {
 			printf("Nop failed => %m\n");
+			break;
+		}
 
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
-		if (failed)
+		if (failed != 0) {
 			printf("MTIOCGET failed => %m\n");
+			break;
+		}
 
+		print_time();
 		struct mtop rewind = { MTBSFM, 2 };
 		if (mt.mt_fileno < 2) {
 			rewind.mt_op = MTREW;
 			rewind.mt_count = 1;
-			printf("Rewinding tape");
+			print_flush("Rewinding tape... ");
 		} else {
-			printf("Moving backward space 1 file");
+			print_flush("Moving backward space 1 file... ");
 		}
-		fflush(stdout);
 
 		failed = ioctl(fd_tape, MTIOCTOP, &rewind);
-		if (failed)
-			printf("Rewind failed => %m\n");
+		if (failed != 0)
+			printf("Failed => %m\n");
 		else
-			printf(", done\n");
+			printf("done\n");
 
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
 		if (failed)
@@ -458,6 +474,9 @@ int main(int argc, char ** argv) {
 	}
 
 	close(fd_tape);
+
+	for (j = 0; j < 32; j++)
+		free(buffer[j]);
 
 	return 0;
 }
@@ -517,11 +536,27 @@ static ssize_t parse_size(const char * size) {
 	return -1;
 }
 
+static void print_flush(const char * format, ...) {
+	va_list va;
+	va_start(va, format);
+	vprintf(format, va);
+	va_end(va);
+
+	fflush(stdout);
+}
+
+static void print_time() {
+	struct timespec now;
+	clock_gettime(CLOCK_REALTIME, &now);
+
+	char buf_time[32];
+	strftime(buf_time, 32, "[ %T ] ", localtime(&now.tv_sec));
+}
+
 static bool rewind_tape(int fd) {
 	static struct mtop rewind = { MTREW, 1 };
 
-	printf("Rewinding tape... ");
-	fflush(stdout);
+	print_flush("Rewinding tape... ");
 
 	int failed = ioctl(fd, MTIOCTOP, &rewind);
 
