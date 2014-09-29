@@ -357,7 +357,7 @@ int main(int argc, char ** argv) {
 
 		int write_error = 0;
 		long long int i;
-		static int last_width = 0;
+		static int last_width = 64;
 		for (i = 0; i < nb_loop; i++) {
 			ssize_t nb_write = write(fd_tape, buffer[i & 0x1F], write_size);
 			if (nb_write < 0) {
@@ -403,7 +403,7 @@ int main(int argc, char ** argv) {
 				printf("loop: %lld, current speed %s, done: %.2f%%%n", i, buffer_size, pct / nb_loop, &last_width);
 				fflush(stdout);
 
-				current = last;
+				last = current;
 			}
 		}
 
@@ -551,6 +551,8 @@ static void print_time() {
 
 	char buf_time[32];
 	strftime(buf_time, 32, "[ %T ] ", localtime(&now.tv_sec));
+
+	printf(buf_time);
 }
 
 static bool rewind_tape(int fd) {
