@@ -313,8 +313,8 @@ int main(int argc, char ** argv) {
 	close(fd_ran);
 	printf("done\n");
 
-	static char clean_line[256];
-	memset(clean_line, ' ', 256);
+	static char clean_line[64];
+	memset(clean_line, ' ', 64);
 
 	ssize_t write_size;
 	for (write_size = min_buffer_size; write_size <= max_buffer_size; write_size <<= 1) {
