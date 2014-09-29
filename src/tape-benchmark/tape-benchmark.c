@@ -195,7 +195,8 @@ int main(int argc, char ** argv) {
 				convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
 				printf("  -m, --min-buffer-size=SIZE : minimum buffer size (instead of %s)\n", buffer_size);
 				convert_size(buffer_size, 16, DEFAULT_SIZE);
-				printf("  -s, --size=SIZE            : size of file (default: %s)\n\n", buffer_size);
+				printf("  -s, --size=SIZE            : size of file (default: %s)\n", buffer_size);
+				printf("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n");
 
 				printf("SIZE can be specified with (BKGT)\n");
 				printf("  1B => 1 byte, 1K => 1024B, 1M => 1024K, 1G => 1024M, 1T => 1024G\n");
@@ -213,7 +214,7 @@ int main(int argc, char ** argv) {
 					max_buffer_size = tmp_size;
 				} else {
 					printf("Error: max-buffer-size should be a power of two\n");
-					return 3;
+					return 1;
 				}
 				break;
 
@@ -223,7 +224,7 @@ int main(int argc, char ** argv) {
 					min_buffer_size = tmp_size;
 				} else {
 					printf("Error: min-buffer-size should be a power of two\n");
-					return 3;
+					return 1;
 				}
 				break;
 
@@ -248,7 +249,7 @@ int main(int argc, char ** argv) {
 	int fd_tape = open(device, O_RDONLY);
 	if (fd_tape < 0) {
 		printf(", failed!!!");
-		return 1;
+		return 2;
 	}
 
 	struct mtget mt;
@@ -263,7 +264,7 @@ int main(int argc, char ** argv) {
 	if (GMT_WR_PROT(mt.mt_gstat)) {
 		close(fd_tape);
 		printf("\nOops: Write lock enabled\n");
-		return 3;
+		return 2;
 	}
 
 	failed = close(fd_tape);
@@ -287,7 +288,7 @@ int main(int argc, char ** argv) {
 	if (fd_ran < 0) {
 		printf("Failed to open \"/dev/urandom\" because %m\n");
 		close(fd_tape);
-		return 4;
+		return 2;
 	}
 
 	long long int i;
@@ -297,7 +298,7 @@ int main(int argc, char ** argv) {
 			printf("Error: failed to allocated memory (size: %zd) because %m\n", max_buffer_size);
 			close(fd_tape);
 			close(fd_ran);
-			return 5;
+			return 3;
 		}
 
 		ssize_t nb_read = read(fd_ran, buffer[i], max_buffer_size);
