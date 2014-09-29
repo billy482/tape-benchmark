@@ -33,6 +33,8 @@
 #include <getopt.h>
 // poll
 #include <poll.h>
+// bool
+#include <stdbool.h>
 // fflush, printf, sscanf, snprintf
 #include <stdio.h>
 // malloc
@@ -62,11 +64,16 @@
 #define MIN_BUFFER_SIZE 16384L
 #define MAX_BUFFER_SIZE 262144L
 
-static int check_size(ssize_t size);
+static bool check_size(ssize_t size);
 static void convert_size(char * str, unsigned int str_len, ssize_t size);
 static ssize_t parse_size(const char * size);
 
-static int check_size(ssize_t size) {
+/**
+ * \brief Check if \a size is a power of two
+ * \param size[in]: size in byte
+ * \return \b true if \a size is a power of two
+ */
+static bool check_size(ssize_t size) {
 	int i = 0;
 	ssize_t tsize = size;
 
@@ -76,11 +83,17 @@ static int check_size(ssize_t size) {
 	}
 
 	if (size != (tsize << i))
-		return 0;
+		return false;
 
-	return 1;
+	return true;
 }
 
+/**
+ * \brief Convert size into string
+ * \param str[out]: write \a size into it
+ * \param str_len[in]: length of \a str
+ * \param size[in]: \a size to be converted into string
+ */
 static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 	unsigned short mult = 0;
 	double tsize = size;
@@ -126,6 +139,11 @@ static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 	}
 }
 
+/**
+ * \brief Convert size from string to integer
+ * \param size[in]: string representing a size
+ * \return \a size or \b -1 if failed
+ */
 static ssize_t parse_size(const char * size) {
 	double dsize = 0;
 	ssize_t lsize = 0;
@@ -173,7 +191,7 @@ static ssize_t parse_size(const char * size) {
 		}
 	}
 
-	return 0;
+	return -1;
 }
 
 int main(int argc, char ** argv) {
