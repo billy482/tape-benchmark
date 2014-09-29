@@ -203,6 +203,7 @@ int main(int argc, char ** argv) {
 				printf("  -m, --min-buffer-size=SIZE : minimum buffer size (instead of %s)\n", buffer_size);
 				convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf("  -s, --size=SIZE            : size of file (default: %s)\n", buffer_size);
+				printf("  -r, --no-rewind            : no rewind tape between step\n");
 				printf("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n");
 
 				printf("SIZE can be specified with (BKGT)\n");
