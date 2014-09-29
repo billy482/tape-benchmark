@@ -328,10 +328,27 @@ int main(int argc, char ** argv) {
 	printf("Generate random data from \"/dev/urandom\"");
 	fflush(stdout);
 	int fd_ran = open("/dev/urandom", O_RDONLY);
+	if (fd_ran < 0) {
+		printf("Failed to open \"/dev/urandom\" because %m\n");
+		close(fd_tape);
+		return 4;
+	}
+
 	long long int i;
 	for (i = 0; i < 32; i++) {
 		buffer[i] = malloc(max_buffer_size);
-		read(fd_ran, buffer[i], max_buffer_size);
+		if (buffer[i] == NULL) {
+			printf("Error: failed to allocated memory (size: %zd) because %m\n", max_buffer_size);
+			close(fd_tape);
+			close(fd_ran);
+			return 5;
+		}
+
+		ssize_t nb_read = read(fd_ran, buffer[i], max_buffer_size);
+		if (nb_read < 0)
+			printf("Warning: failed to read from \"/dev/urandom\" because %m\n");
+		else if (nb_read < max_buffer_size)
+			printf("Warning: read less than expected, %zd instead of %zd\n", nb_read, max_buffer_size);
 	}
 	close(fd_ran);
 	printf(", done\n");
