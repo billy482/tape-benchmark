@@ -67,6 +67,7 @@
 static bool check_size(ssize_t size);
 static void convert_size(char * str, unsigned int str_len, ssize_t size);
 static ssize_t parse_size(const char * size);
+static bool rewind_tape(int fd);
 
 /**
  * \brief Check if \a size is a power of two
@@ -137,61 +138,6 @@ static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 		if (ptrBegin + 1 < ptrEnd)
 			memmove(ptrBegin + 1, ptrEnd, strlen(ptrEnd) + 1);
 	}
-}
-
-/**
- * \brief Convert size from string to integer
- * \param size[in]: string representing a size
- * \return \a size or \b -1 if failed
- */
-static ssize_t parse_size(const char * size) {
-	double dsize = 0;
-	ssize_t lsize = 0;
-	char mult = '\0';
-
-	static const struct {
-		char * pat;
-		short nbElt;
-	} pattern[] = {
-		{ "%lg %c", 2 },
-		{ "%lg%c",  2 },
-		{ "%llu",   1 },
-
-		{ 0, 0},
-	};
-
-	int i;
-	for (i = 0; pattern[i].pat; i++) {
-		if (pattern[i].nbElt == 2 && sscanf(size, pattern[i].pat, &dsize, &mult) == 2) {
-			if (mult == ' ')
-				continue;
-
-			switch (mult) {
-				case 'k':
-				case 'K':
-					dsize *= 1024;
-					break;
-
-				case 'm':
-				case 'M':
-					dsize *= 1048576;
-					break;
-
-				case 'g':
-				case 'G':
-					dsize *= 1073741824;
-					break;
-			}
-			return (unsigned long long) dsize;
-		} else if (pattern[i].nbElt == 1 && sscanf(size, pattern[i].pat, &lsize) == 1) {
-			if (mult == ' ')
-				continue;
-
-			return 1L << lsize;
-		}
-	}
-
-	return -1;
 }
 
 int main(int argc, char ** argv) {
@@ -476,7 +422,6 @@ int main(int argc, char ** argv) {
 		if (failed)
 			printf("MTIOCGET failed => %m\n");
 
-
 		struct mtop rewind = { MTBSFM, 2 };
 		if (mt.mt_fileno < 2) {
 			rewind.mt_op = MTREW;
@@ -504,5 +449,76 @@ int main(int argc, char ** argv) {
 	close(fd_tape);
 
 	return 0;
+}
+
+/**
+ * \brief Convert size from string to integer
+ * \param size[in]: string representing a size
+ * \return \a size or \b -1 if failed
+ */
+static ssize_t parse_size(const char * size) {
+	double dsize = 0;
+	ssize_t lsize = 0;
+	char mult = '\0';
+
+	static const struct {
+		char * pat;
+		short nbElt;
+	} pattern[] = {
+		{ "%lg %c", 2 },
+		{ "%lg%c",  2 },
+		{ "%llu",   1 },
+
+		{ 0, 0},
+	};
+
+	int i;
+	for (i = 0; pattern[i].pat; i++) {
+		if (pattern[i].nbElt == 2 && sscanf(size, pattern[i].pat, &dsize, &mult) == 2) {
+			if (mult == ' ')
+				continue;
+
+			switch (mult) {
+				case 'k':
+				case 'K':
+					dsize *= 1024;
+					break;
+
+				case 'm':
+				case 'M':
+					dsize *= 1048576;
+					break;
+
+				case 'g':
+				case 'G':
+					dsize *= 1073741824;
+					break;
+			}
+			return (unsigned long long) dsize;
+		} else if (pattern[i].nbElt == 1 && sscanf(size, pattern[i].pat, &lsize) == 1) {
+			if (mult == ' ')
+				continue;
+
+			return 1L << lsize;
+		}
+	}
+
+	return -1;
+}
+
+static bool rewind_tape(int fd) {
+	static struct mtop rewind = { MTREW, 1 };
+
+	printf("Rewinding tape... ");
+	fflush(stdout);
+
+	int failed = ioctl(fd, MTIOCTOP, &rewind);
+
+	if (failed != 0)
+		printf("Rewind failed => %m\n");
+	else
+		printf(", done\n");
+
+	return failed == 0;
 }
 
