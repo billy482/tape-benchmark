@@ -149,6 +149,7 @@ int main(int argc, char ** argv) {
 	static char buffer_size[16];
 	const char * device = DEFAULT_DEVICE;
 	ssize_t size = DEFAULT_SIZE;
+	bool no_rewind = false;
 	bool rewind = false;
 
 	ssize_t max_buffer_size = MAX_BUFFER_SIZE;
@@ -160,6 +161,7 @@ int main(int argc, char ** argv) {
 		OPT_HELP       = 'h',
 		OPT_MAX_BUFFER = 'M',
 		OPT_MIN_BUFFER = 'm',
+		OPT_NO_REWIND  = 'r',
 		OPT_REWIND     = 'R',
 		OPT_SIZE       = 's',
 		OPT_VERSION    = 'V',
@@ -170,6 +172,7 @@ int main(int argc, char ** argv) {
 		{ "help",            0, 0, OPT_HELP },
 		{ "max-buffer-size", 1, 0, OPT_MAX_BUFFER },
 		{ "min-buffer-size", 1, 0, OPT_MIN_BUFFER },
+		{ "no-rewind",       0, 0, OPT_NO_REWIND },
 		{ "size",            1, 0, OPT_SIZE },
 		{ "rewind-at-start", 0, 0, OPT_REWIND },
 		{ "version",         0, 0, OPT_VERSION },
@@ -179,7 +182,7 @@ int main(int argc, char ** argv) {
 
 	static int lo;
 	for (;;) {
-		int c = getopt_long(argc, argv, "d:hm:M:s:RV?", op, &lo);
+		int c = getopt_long(argc, argv, "d:hm:M:s:rRV?", op, &lo);
 
 		if (c == -1)
 			break;
@@ -230,6 +233,10 @@ int main(int argc, char ** argv) {
 					printf("Error: min-buffer-size should be a power of two\n");
 					return 1;
 				}
+				break;
+
+			case OPT_NO_REWIND:
+				no_rewind = true;
 				break;
 
 			case OPT_SIZE:
@@ -449,21 +456,22 @@ int main(int argc, char ** argv) {
 			break;
 		}
 
-		print_time();
-		struct mtop rewind = { MTBSFM, 2 };
-		if (mt.mt_fileno < 2) {
-			rewind.mt_op = MTREW;
-			rewind.mt_count = 1;
-			print_flush("Rewinding tape... ");
-		} else {
-			print_flush("Moving backward space 1 file... ");
+		if (no_rewind) {
+			if (mt.mt_fileno < 2) {
+				rewind_tape(fd_tape);
+			} else {
+				print_time();
+				print_flush("Moving backward space 1 file... ");
+
+				static struct mtop rewind = { MTBSFM, 2 };
+				failed = ioctl(fd_tape, MTIOCTOP, &rewind);
+				if (failed != 0)
+					printf("Failed => %m\n");
+				else
+					printf("done\n");
+			}
 		}
 
-		failed = ioctl(fd_tape, MTIOCTOP, &rewind);
-		if (failed != 0)
-			printf("Failed => %m\n");
-		else
-			printf("done\n");
 
 		failed = ioctl(fd_tape, MTIOCGET, &mt2);
 		if (failed)
