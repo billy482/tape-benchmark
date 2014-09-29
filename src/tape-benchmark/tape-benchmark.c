@@ -145,6 +145,7 @@ int main(int argc, char ** argv) {
 	char buffer_size[16];
 	char * device = DEFAULT_DEVICE;
 	ssize_t size = DEFAULT_SIZE;
+	bool rewind = false;
 
 	ssize_t max_buffer_size = MAX_BUFFER_SIZE;
 	ssize_t min_buffer_size = MIN_BUFFER_SIZE;
@@ -155,6 +156,7 @@ int main(int argc, char ** argv) {
 		OPT_HELP       = 'h',
 		OPT_MAX_BUFFER = 'M',
 		OPT_MIN_BUFFER = 'm',
+		OPT_REWIND     = 'R',
 		OPT_SIZE       = 's',
 		OPT_VERSION    = 'V',
 	};
@@ -165,6 +167,7 @@ int main(int argc, char ** argv) {
 		{"max-buffer-size", 1, 0, OPT_MAX_BUFFER},
 		{"min-buffer-size", 1, 0, OPT_MIN_BUFFER},
 		{"size",            1, 0, OPT_SIZE},
+		{"rewind-at-start", 0, 0, OPT_REWIND},
 		{"version",         0, 0, OPT_VERSION},
 
 		{0, 0, 0, 0},
@@ -172,7 +175,7 @@ int main(int argc, char ** argv) {
 
 	static int lo;
 	for (;;) {
-		int c = getopt_long(argc, argv, "d:hm:M:s:V?", op, &lo);
+		int c = getopt_long(argc, argv, "d:hm:M:s:RV?", op, &lo);
 
 		if (c == -1)
 			break;
@@ -228,6 +231,10 @@ int main(int argc, char ** argv) {
 				size = parse_size(optarg);
 				break;
 
+			case OPT_REWIND:
+				rewind = true;
+				break;
+
 			case OPT_VERSION:
 				printf("tape-benchmark (%s, date and time : %s %s)\n", TAPEBENCHMARK_VERSION, __DATE__, __TIME__);
 				printf("checksum of source code: %s\n", TAPEBENCHMARK_SRCSUM);
@@ -268,6 +275,9 @@ int main(int argc, char ** argv) {
 	} else {
 		printf(", fd: %d\n", fd_tape);
 	}
+
+	if (rewind && !rewind_tape(fd_tape))
+		return 2;
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
