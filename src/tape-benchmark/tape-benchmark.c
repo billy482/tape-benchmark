@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Mon, 29 Sep 2014 23:10:58 +0200                           *
+*  Last modified: Tue, 30 Sep 2014 15:22:06 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -218,20 +218,20 @@ int main(int argc, char ** argv) {
 
 			case OPT_MAX_BUFFER:
 				tmp_size = parse_size(optarg);
-				if (check_size(tmp_size)) {
+				if (tmp_size > 0 && check_size(tmp_size)) {
 					max_buffer_size = tmp_size;
 				} else {
-					printf("Error: max-buffer-size should be a power of two\n");
+					printf("Error: max-buffer-size should be positive and a power of two\n");
 					return 1;
 				}
 				break;
 
 			case OPT_MIN_BUFFER:
 				tmp_size = parse_size(optarg);
-				if (check_size(tmp_size)) {
+				if (tmp_size > 0 && check_size(tmp_size)) {
 					min_buffer_size = tmp_size;
 				} else {
-					printf("Error: min-buffer-size should be a power of two\n");
+					printf("Error: min-buffer-size should be positive and a power of two\n");
 					return 1;
 				}
 				break;
@@ -241,7 +241,13 @@ int main(int argc, char ** argv) {
 				break;
 
 			case OPT_SIZE:
-				size = parse_size(optarg);
+				tmp_size = parse_size(optarg);
+				if (tmp_size > 0) {
+					size = tmp_size;
+				} else {
+					printf("Error: size should be positive\n");
+					return 1;
+				}
 				break;
 
 			case OPT_REWIND:
