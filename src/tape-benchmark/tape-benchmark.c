@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 30 Sep 2014 18:54:03 +0200                           *
+*  Last modified: Tue, 30 Sep 2014 18:58:33 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -79,6 +79,9 @@ static bool rewind_tape(int fd);
  * \return \b true if \a size is a power of two
  */
 static bool check_size(ssize_t size) {
+	if (size < 0)
+		return false;
+
 	int i = 0;
 	ssize_t tsize = size;
 
@@ -249,7 +252,7 @@ int main(int argc, char ** argv) {
 			case OPT_SIZE:
 				tmp_size = parse_size(optarg);
 				if (tmp_size == -1) {
-					printf("Error: invalid size for size\n");
+					printf("Error: invalid size\n");
 					return 1;
 				} else if (tmp_size > 0) {
 					size = tmp_size;
@@ -528,6 +531,8 @@ static ssize_t parse_size(const char * size) {
 	int i;
 	for (i = 0; pattern[i].pat; i++) {
 		if (pattern[i].nbElt == 2 && sscanf(size, pattern[i].pat, &dsize, &mult) == 2) {
+			if (dsize < 0)
+				return -1;
 			if (mult == ' ')
 				continue;
 
@@ -552,7 +557,7 @@ static ssize_t parse_size(const char * size) {
 			if (mult == ' ')
 				continue;
 
-			return 1L << lsize;
+			return lsize > 0 ? 1L << lsize : -1;
 		}
 	}
 
