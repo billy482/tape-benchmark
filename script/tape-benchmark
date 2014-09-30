@@ -1,0 +1,41 @@
+have tape-benchmark &&
+_tapebenchmark() {
+	local cur prev
+
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+	case "$prev" in
+		-d | --device)
+			_filedir
+			return 0
+			;;
+		-h | --help)
+			return 0
+			;;
+		-m | -M | -s | --max-buffer-size | --min-buffer-size | --size)
+			if [[ -z "$cur" ]]; then
+				COMPREPLY=( $(compgen -W '1 2 3 4 5 6 7 8 9' -- "$cur" ) )
+			elif [[ "$cur" =~ [BKMGT] ]]; then
+				return 0
+			else
+				COMPREPLY=( $(compgen -W "${cur}0 ${cur}1 ${cur}2 ${cur}3 ${cur}4 ${cur}5 ${cur}6 ${cur}7 ${cur}8 ${cur}9 ${cur}B ${cur}K ${cur}M ${cur}G" -- "$cur" ) )
+			fi
+			return 0
+			;;
+		-r | --no-rewind)
+			return 0
+			;;
+		-R | --rewind-at-start)
+			return 0
+			;;
+	esac;
+
+	COMPREPLY=( $( compgen -W "-d -h -m -M -s -r -R \
+				--device --help --max-buffer-size --min-buffer-size --size \
+				--no-rewind --rewind-at-start" -- "$cur" ) )
+
+	return 0;
+}
+complete -F _tapebenchmark tape-benchmark
