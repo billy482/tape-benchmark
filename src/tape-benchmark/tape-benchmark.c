@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 30 Sep 2014 15:22:06 +0200                           *
+*  Last modified: Tue, 30 Sep 2014 18:54:03 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -218,7 +218,10 @@ int main(int argc, char ** argv) {
 
 			case OPT_MAX_BUFFER:
 				tmp_size = parse_size(optarg);
-				if (tmp_size > 0 && check_size(tmp_size)) {
+				if (tmp_size == -1) {
+					printf("Error: invalid size for max-buffer-size\n");
+					return 1;
+				} else if (tmp_size > 0 && check_size(tmp_size)) {
 					max_buffer_size = tmp_size;
 				} else {
 					printf("Error: max-buffer-size should be positive and a power of two\n");
@@ -228,7 +231,10 @@ int main(int argc, char ** argv) {
 
 			case OPT_MIN_BUFFER:
 				tmp_size = parse_size(optarg);
-				if (tmp_size > 0 && check_size(tmp_size)) {
+				if (tmp_size == -1) {
+					printf("Error: invalid size for min-buffer-size\n");
+					return 1;
+				} else if (tmp_size > 0 && check_size(tmp_size)) {
 					min_buffer_size = tmp_size;
 				} else {
 					printf("Error: min-buffer-size should be positive and a power of two\n");
@@ -242,7 +248,10 @@ int main(int argc, char ** argv) {
 
 			case OPT_SIZE:
 				tmp_size = parse_size(optarg);
-				if (tmp_size > 0) {
+				if (tmp_size == -1) {
+					printf("Error: invalid size for size\n");
+					return 1;
+				} else if (tmp_size > 0) {
 					size = tmp_size;
 				} else {
 					printf("Error: size should be positive\n");
