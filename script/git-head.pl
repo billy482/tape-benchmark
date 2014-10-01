@@ -9,7 +9,9 @@ open my $fd, '<', '.git/HEAD';
 while (<$fd>) {
     if (/^ref: (.+)$/) {
         $ref = $1;
-        last;
+    }
+    else {
+        exit 0;
     }
 }
 close $fd;
