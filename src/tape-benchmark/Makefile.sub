@@ -1,7 +1,7 @@
 TAPEBENCHMARK_SRC_DIR		:= src/tape-benchmark
 
 TAPEBENCHMARK_BIN			:= bin/tape-benchmark
-TAPEBENCHMARK_LD			:=
+TAPEBENCHMARK_LD			:= $(shell ./script/check-link.sh gettime.c -lrt)
 
 TAPEBENCHMARK_CHCKSUM_FILE	:= tape-benchmark.chcksum
 
