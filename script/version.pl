@@ -7,8 +7,16 @@ my ( $symbol, $filename ) = @ARGV;
 
 my ($version) = qx/git describe/;
 chomp $version;
-my ($branch) = grep {s/^\* (?:.*\/)?(\w+)/$1/} qx/git branch/;
+
+my ($branch) = grep {/^\*/} qx/LANG=C git branch/;
 chomp $branch;
+if ( $branch =~ /\(detached from \w+\)/ ) {
+    $branch = 'detached';
+}
+else {
+    $branch =~ s/^\* (\.*)$/$1/;
+}
+
 $version .= '-' . $branch if $branch ne 'master';
 
 my ($git_commit) = qx/git log -1 --format=%H/;
