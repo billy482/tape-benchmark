@@ -1,4 +1,6 @@
 language: c
 compiler: gcc
-# Change this to your needs
+install: 
+  - sudo apt-get update -qq
+  - sudo apt-get install git
 script: make
