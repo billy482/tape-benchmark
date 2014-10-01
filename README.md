@@ -1,8 +1,6 @@
 tape-benchmark
 ============
-<a href="https://scan.coverity.com/projects/3133">
-  <img alt="Coverity Scan Build Status"
-       src="https://scan.coverity.com/projects/3133/badge.svg"/>
-</a>
+[![Build Status](https://travis-ci.org/billy482/tape-benchmark.svg?branch=master)](https://travis-ci.org/billy482/tape-benchmark)
+[![Check Status](https://scan.coverity.com/projects/3133/badge.svg)](https://scan.coverity.com/projects/3133)
 
 Simple tool which help to find the best block size when using tape drive
