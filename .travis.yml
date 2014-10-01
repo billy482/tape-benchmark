@@ -3,4 +3,6 @@ compiler: gcc
 install: 
   - sudo apt-get update -qq
   - sudo apt-get install git
-script: make
+script:
+  - ls -a
+  - make
