@@ -580,7 +580,7 @@ static void print_time() {
 	char buf_time[32];
 	strftime(buf_time, 32, "[ %T ] ", localtime(&now.tv_sec));
 
-	printf(buf_time);
+	printf("%s", buf_time);
 }
 
 static bool rewind_tape(int fd) {
