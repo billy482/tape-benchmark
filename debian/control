@@ -1,0 +1,15 @@
+Source: tape-benchmark
+Section: utils
+Priority: optional
+Maintainer: guillaume clercin <gclercin@intellique.com>
+Build-Depends: debhelper (>= 9), git
+Standards-Version: 3.9.5
+Homepage: https://github.com/billy482/tape-benchmark/wiki
+Vcs-Git: https://github.com/billy482/tape-benchmark.git
+Vcs-Browser: https://github.com/billy482/tape-benchmark
+
+Package: tape-benchmark
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Find best block to use with tape drive
+ Find best block to use with tape drive
