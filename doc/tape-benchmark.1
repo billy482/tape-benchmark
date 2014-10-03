@@ -1,0 +1,71 @@
+.TH tape-benchmark 1 "October 1, 2014" "" "Tape Benchmark"
+
+.SH NAME
+tape-benchmark \- Find best block to use with tape drive
+
+.SH SYNOPSIS
+.B tape-benchmark
+.RI [ options ]
+.br
+
+.SH DESCRIPTION
+\fBTape-benchmark\fP is a simple tool to determine what block size to use with your tape drive.
+.br
+\fBTape-benchmark\fP will write several files with different block size and display write mean speed.
+
+.SH OPTIONS
+.B
+.TP
+\fB\-d\fP, \fB\-\-device\fP=\fBDEVICE\fP
+Use DEVICE instead of "\f(RB/dev/nst0\fP"
+.TP
+\fB\-h\fP, \fB\-\-help\fP
+Show help and exit
+.TP
+\fB\-M\fP, \fB\-\-max-buffer-size\fP=\fBSIZE\fP
+Last block size used by the test. \fBSIZE\fP should be a power of two.
+.TP
+\fB\-m\fP, \fB\-\-min-buffer-size\fP=\fBSIZE\fP
+First block size used by the test. \fBSIZE\fP should be a power of two.
+.TP
+\fB\-s\fP, \fB\-\-size\fP=\fBSIZE\fP
+\fBSIZE\fP of file write by the test.
+.TP
+\fB\-r\fP, \fB\-\-no-rewind\fP
+Do not rewind between test.
+.TP
+\fB\-R\fP, \fB\-\-no-rewind\fP
+Rewind tape at start of test.
+
+.SH EXAMPLE
+.PP
+.ns
+$ tape-benchmark -m 16K -M 64K -s 4G
+.br
+[ 23:53:22 ] Openning "/dev/nst0"... fd: 3
+.br
+[ 23:53:22 ] Generate random data from "/dev/urandom"... done
+.br
+[ 23:53:22 ] Starting, nb loop: 131072, block size: 32 Kbytes
+.br
+[ 23:53:59 ] Finished, current speed 108 Mbytes
+.br
+[ 23:54:01 ] Rewinding tape... done
+.br
+[ 23:54:35 ] Starting, nb loop: 65536, block size: 64 Kbytes
+.br
+[ 23:55:13 ] Finished, current speed 111 Mbytes
+.br
+[ 23:55:14 ] Rewinding tape... done
+.br
+[ 23:55:48 ] Starting, nb loop: 32768, block size: 128 Kbytes
+.br
+[ 23:56:26 ] Finished, current speed 111 Mbytes
+.br
+[ 23:56:27 ] Rewinding tape... done
+.RE
+.fi
+.PP
+
+.SH AUTHOR
+Guillaume Clercin <clercin.guillaume+tapebenchmark@gmail.com>

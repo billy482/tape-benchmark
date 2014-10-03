@@ -1,9 +1,7 @@
-.\"Created with GNOME Manpages Editor Wizard
-.\"http://sourceforge.net/projects/gmanedit2
 .TH tape-benchmark 1 "October 1, 2014" "" "Tape Benchmark"
 
 .SH NAME
-tape-benchmark \- Find best block to use with tape drive
+tape-benchmark \- Recherche de la meilleur taille de bloque avec un lecteur de bande
 
 .SH SYNOPSIS
 .B tape-benchmark
@@ -11,33 +9,33 @@ tape-benchmark \- Find best block to use with tape drive
 .br
 
 .SH DESCRIPTION
-\fBTape-benchmark\fP is a simple tool to determine what block size to use with your tape drive.
+\fBTape-benchmark\fP est un simple outil pour déterminer qu'elle taille de bloque, il faut utiliser avec son lecteur de bande.
 .br
-\fBTape-benchmark\fP will write several file with different block size and display write mean speed.
+\fBTape-benchmark\fP va écrire plusieurs fichiers avec différents taille de bloque et affiche la vitesse d'écriture.
 
 .SH OPTIONS
 .B
 .TP
 \fB\-d\fP, \fB\-\-device\fP=\fBDEVICE\fP
-Use DEVICE instead of "\f(RB/dev/nst0\fP"
+Utilise DEVICE à la place de "\f(RB/dev/nst0\fP"
 .TP
 \fB\-h\fP, \fB\-\-help\fP
-Show help and exit
+Affiche l'aide et quit.
 .TP
-\fB\-M\fP, \fB\-\-max-buffer-size\fP=\fBSIZE\fP
-Last block size used by the test. \fBSIZE\fP should be a power of two.
+\fB\-M\fP, \fB\-\-max-buffer-size\fP=\fBTAILLE\fP
+Dernière taille de bloque utilisé par le test. \fBSIZE\fP doit être une puissance de deux.
 .TP
-\fB\-m\fP, \fB\-\-min-buffer-size\fP=\fBSIZE\fP
-First block size used by the test. \fBSIZE\fP should be a power of two.
+\fB\-m\fP, \fB\-\-min-buffer-size\fP=\fBTAILLE\fP
+Première taille de bloque utilisé par le test. \fBSIZE\fP doit être une puissance de deux.
 .TP
-\fB\-s\fP, \fB\-\-size\fP=\fBSIZE\fP
-\fBSIZE\fP of file write by the test.
+\fB\-s\fP, \fB\-\-size\fP=\fBTAILLE\fP
+\fBTAILLE\fP du fichier écrit par le test.
 .TP
 \fB\-r\fP, \fB\-\-no-rewind\fP
-Do not rewind between step.
+Ne pas rempobiner entre chaque test.
 .TP
 \fB\-R\fP, \fB\-\-no-rewind\fP
-Rewind tape at start of test.
+Ne pas rembobiner au début du test.
 
 .SH EXAMPLE
 .PP
