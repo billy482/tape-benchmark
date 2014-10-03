@@ -1,4 +1,4 @@
 bin/tape-benchmark usr/bin/
 script/tape-benchmark etc/bash_completion.d/
 doc/tape-benchmark.1 /usr/share/man/man1/
-doc/tape-benchmark.fr.1 /usr/share/man/fr/man1/
+doc/tape-benchmark.fr.1 /usr/share/man/fr/man1/doc/tape-benchmark.1
