@@ -14,7 +14,7 @@ if ( $branch =~ /\(detached from \w+\)/ ) {
     $branch = 'detached';
 }
 else {
-    $branch =~ s/^\* (\.*)$/$1/;
+    $branch =~ s/^\* (.*)$/$1/;
 }
 
 $version .= '-' . $branch if $branch ne 'master';
