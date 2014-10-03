@@ -1,3 +1,9 @@
+tape-benchmark (0.3.1) unstable; urgency=low
+
+  * Bug fix release
+
+ -- guillaume <gclercin@intellique.com>  Sat, 04 Oct 2014 01:24:12 +0200
+
 tape-benchmark (0.3) unstable; urgency=low
 
   * Initial Release.
