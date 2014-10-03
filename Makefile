@@ -145,8 +145,8 @@ debug: binaries
 	${GDB} bin/tape-benchmark
 
 distclean realclean: clean
-	@echo ' RM       -Rf cscope.out doc ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}'
-	@rm -Rf cscope.out doc ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}
+	@echo ' RM       -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}'
+	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}
 
 doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
 	@echo ' DOXYGEN'
