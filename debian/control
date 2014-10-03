@@ -12,4 +12,6 @@ Package: tape-benchmark
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: Find best block to use with tape drive
- Find best block to use with tape drive
+ Tape-benchmark is a simple tool to determine what block size to use with your
+ tape drive. Tape-benchmark will write several files with different block size
+ and display write mean speed.
