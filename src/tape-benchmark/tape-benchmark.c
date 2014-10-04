@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 30 Sep 2014 18:58:33 +0200                           *
+*  Last modified: Sat, 04 Oct 2014 12:06:34 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -564,6 +564,10 @@ static ssize_t parse_size(const char * size) {
 	return -1;
 }
 
+/**
+ * \brief print_flush is a shortcut of printf(format, ...) then fflush(stdout)
+ * \param format[in]: printf compatible format
+ */
 static void print_flush(const char * format, ...) {
 	va_list va;
 	va_start(va, format);
@@ -573,6 +577,9 @@ static void print_flush(const char * format, ...) {
 	fflush(stdout);
 }
 
+/**
+ * \brief print current time to stdout
+ */
 static void print_time() {
 	struct timespec now;
 	clock_gettime(CLOCK_REALTIME, &now);
@@ -583,6 +590,11 @@ static void print_time() {
 	printf("%s", buf_time);
 }
 
+/**
+ * \brief rewind tape
+ * \param fd[in]: valid file descriptor
+ * \return true if success
+ */
 static bool rewind_tape(int fd) {
 	static struct mtop rewind = { MTREW, 1 };
 
