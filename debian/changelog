@@ -1,3 +1,9 @@
+tape-benchmark (0.3.3) unstable; urgency=low
+
+  * Fix french man page
+
+ -- guillaume clercin <gclercin@intellique.com>  Sat, 04 Oct 2014 10:29:25 +0200
+
 tape-benchmark (0.3.2) unstable; urgency=low
 
   * Fix install

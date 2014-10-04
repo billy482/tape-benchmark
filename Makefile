@@ -159,7 +159,7 @@ install: all
 	@cp script/tape-benchmark ${DESTDIR}/etc/bash_completion.d
 	@cp bin/tape-benchmark ${DESTDIR}/usr/bin
 	@cp doc/tape-benchmark.1 ${DESTDIR}/usr/share/man/man1
-	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1
+	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1/tape-benchmark.1
 
 package:
 	@echo ' CLEAN'
