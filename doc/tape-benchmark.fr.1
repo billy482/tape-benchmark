@@ -9,30 +9,30 @@ tape-benchmark \- Recherche de la meilleur taille de bloque avec un lecteur de b
 .br
 
 .SH DESCRIPTION
-\fBTape-benchmark\fP est un simple outil pour déterminer qu'elle taille de bloque, il faut utiliser avec son lecteur de bande.
+\fBTape-benchmark\fP est un simple outil pour déterminer quelle taille de bloque, qu'il faut utiliser avec son lecteur de bande.
 .br
 \fBTape-benchmark\fP va écrire plusieurs fichiers avec différents taille de bloque et affiche la vitesse d'écriture.
 
 .SH OPTIONS
 .B
 .TP
-\fB\-d\fP, \fB\-\-device\fP=\fBDEVICE\fP
-Utilise DEVICE à la place de "\f(RB/dev/nst0\fP"
+\fB\-d\fP, \fB\-\-device\fP=\fBLECTEUR\fP
+Utilise LECTEUR à la place de "\f(RB/dev/nst0\fP"
 .TP
 \fB\-h\fP, \fB\-\-help\fP
-Affiche l'aide et quit.
+Affiche l'aide et quitte.
 .TP
 \fB\-M\fP, \fB\-\-max-buffer-size\fP=\fBTAILLE\fP
-Dernière taille de bloque utilisé par le test. \fBSIZE\fP doit être une puissance de deux.
+Dernière taille de bloque utilisé par le test. \fBTAILLE\fP doit être une puissance de deux.
 .TP
 \fB\-m\fP, \fB\-\-min-buffer-size\fP=\fBTAILLE\fP
-Première taille de bloque utilisé par le test. \fBSIZE\fP doit être une puissance de deux.
+Première taille de bloque utilisé par le test. \fBTAILLE\fP doit être une puissance de deux.
 .TP
 \fB\-s\fP, \fB\-\-size\fP=\fBTAILLE\fP
 \fBTAILLE\fP du fichier écrit par le test.
 .TP
 \fB\-r\fP, \fB\-\-no-rewind\fP
-Ne pas rempobiner entre chaque test.
+Ne pas rembobiner entre chaque test.
 .TP
 \fB\-R\fP, \fB\-\-no-rewind\fP
 Ne pas rembobiner au début du test.
