@@ -116,7 +116,7 @@ DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 
 # phony target
 .DEFAULT_GOAL	:= all
-.PHONY: all binaries clean clean-depend cscope ctags debug distclean lib prepare realclean stat stat-extra TAGS tar
+.PHONY: all binaries clean clean-depend cscope ctags debug distclean install lib package prepare realclean stat stat-extra TAGS tar
 .NOTPARALLEL: prepare
 
 all: binaries cscope tags
@@ -152,6 +152,20 @@ doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
 	@echo ' DOXYGEN'
 	@${DOXYGEN}
 
+install: all
+	@echo ' MKDIR     ${DESTDIR}'
+	@mkdir -p ${DESTDIR}/etc/bash_completion.d ${DESTDIR}/usr/bin ${DESTDIR}/usr/share/man/fr/man1 ${DESTDIR}/usr/share/man/man1
+	@echo ' CP'
+	@cp script/tape-benchmark ${DESTDIR}/etc/bash_completion.d
+	@cp bin/tape-benchmark ${DESTDIR}/usr/bin
+	@cp doc/tape-benchmark.1 ${DESTDIR}/usr/share/man/man1
+	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1
+
+package:
+	@echo ' CLEAN'
+	@dh_clean
+	@echo ' BUILD package'
+	@dpkg-buildpackage -us -uc -rfakeroot
 
 prepare: ${BIN_DIRS} ${CHCKSUM_DIR} ${DEP_DIRS} ${OBJ_DIRS} $(addprefix prepare_,${BIN_SYMS}) $(addprefix prepare_,${TEST_BIN_SYMS}) ${VERSION_FILE}
 

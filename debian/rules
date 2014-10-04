@@ -30,3 +30,6 @@ include /usr/share/dpkg/default.mk
 override_dh_auto_test:
 	@echo 'fake auto test'
 
+override_dh_auto_install:
+	@make install DESTDIR=debian/tmp
+
