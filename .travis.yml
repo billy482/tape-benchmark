@@ -18,6 +18,7 @@ install:
 
 script:
   - make package
+  - lintian ../tape-benchmark_*.dsc
 
 addons:
   coverity_scan:
