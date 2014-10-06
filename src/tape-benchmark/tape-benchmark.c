@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Mon, 06 Oct 2014 23:51:08 +0200                           *
+*  Last modified: Tue, 07 Oct 2014 01:03:34 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -209,9 +209,9 @@ int main(int argc, char ** argv) {
 				printf(gettext("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n"), DEFAULT_DEVICE);
 				printf(gettext("  -h, --help                 : show this and quit\n"));
 				convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
-				printf(gettext("  -M, --max-buffer-size=SIZE : maximum buffer size (instead of %s)\n"), buffer_size);
+				printf(gettext("  -M, --max-buffer-size=SIZE : maximum block size (instead of %s)\n"), buffer_size);
 				convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
-				printf(gettext("  -m, --min-buffer-size=SIZE : minimum buffer size (instead of %s)\n"), buffer_size);
+				printf(gettext("  -m, --min-buffer-size=SIZE : minimum block size (instead of %s)\n"), buffer_size);
 				convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf(gettext("  -s, --size=SIZE            : size of file (default: %s)\n"), buffer_size);
 				printf(gettext("  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"));
@@ -223,14 +223,14 @@ int main(int argc, char ** argv) {
 				printf(gettext("  10 => 2^10 bytes (= 1K), 16 => 2^16 bytes (= 64K), 24 => 2^24 bytes (= 16M), and so on\n"));
 				printf(gettext("Constraint: min-buffer-size and max-buffer-size should be a power of two\n\n"));
 
-				printf(gettext("Note: this programme will allocate 32 buffers of max-buffer-size\n"));
+				printf(gettext("Notice: this programme will allocate 32 buffers of max-buffer-size\n"));
 
 				return 0;
 
 			case OPT_MAX_BUFFER:
 				tmp_size = parse_size(optarg);
 				if (tmp_size == -1) {
-					printf(gettext("Error: invalid size for max-buffer-size\n"));
+					printf(gettext("Error: invalid block size for max-buffer-size\n"));
 					return 1;
 				} else if (tmp_size > 0 && check_size(tmp_size)) {
 					max_buffer_size = tmp_size;
@@ -243,7 +243,7 @@ int main(int argc, char ** argv) {
 			case OPT_MIN_BUFFER:
 				tmp_size = parse_size(optarg);
 				if (tmp_size == -1) {
-					printf(gettext("Error: invalid size for min-buffer-size\n"));
+					printf(gettext("Error: invalid block size for min-buffer-size\n"));
 					return 1;
 				} else if (tmp_size > 0 && check_size(tmp_size)) {
 					min_buffer_size = tmp_size;
@@ -260,7 +260,7 @@ int main(int argc, char ** argv) {
 			case OPT_SIZE:
 				tmp_size = parse_size(optarg);
 				if (tmp_size == -1) {
-					printf(gettext("Error: invalid size\n"));
+					printf(gettext("Error: invalid file size\n"));
 					return 1;
 				} else if (tmp_size > 0) {
 					size = tmp_size;
@@ -302,7 +302,7 @@ int main(int argc, char ** argv) {
 
 	if (GMT_WR_PROT(mt.mt_gstat)) {
 		close(fd_tape);
-		printf(gettext("Oops: Write lock enabled\n"));
+		printf(gettext("Oops: Tape has its write lock enabled\n"));
 		return 2;
 	}
 
@@ -322,7 +322,7 @@ int main(int argc, char ** argv) {
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
 	print_time();
-	print_flush("Generate random data from \"/dev/urandom\"... ");
+	print_flush(gettext("Generate random data from \"/dev/urandom\"... "));
 	int fd_ran = open("/dev/urandom", O_RDONLY);
 	if (fd_ran < 0) {
 		printf(gettext("Failed to open because %m\n"));
@@ -334,7 +334,7 @@ int main(int argc, char ** argv) {
 	for (j = 0; j < 32; j++) {
 		buffer[j] = malloc(max_buffer_size);
 		if (buffer[j] == NULL) {
-			printf(gettext("Error: failed to allocated memory (size: %zd) because %m\n"), max_buffer_size);
+			printf(gettext("Error: failed to allocate memory (size: %zd) because %m\n"), max_buffer_size);
 			close(fd_tape);
 			close(fd_ran);
 			return 3;
@@ -375,7 +375,7 @@ int main(int argc, char ** argv) {
 			pll_rslt = poll(&plfd, 1, 6000);
 
 			if (pll_rslt > 0)
-				printf(gettext("\n"));
+				printf("\n");
 		}
 
 		struct timeval time_start;
@@ -398,7 +398,7 @@ int main(int argc, char ** argv) {
 			ssize_t nb_write = write(fd_tape, buffer[i & 0x1F], write_size);
 			if (nb_write < 0) {
 				if (last_width > 0)
-					printf(gettext("\r%*s\r"), last_width, clean_line);
+					printf("\r%*s\r", last_width, clean_line);
 
 				switch (errno) {
 					case EINVAL:
@@ -407,7 +407,7 @@ int main(int argc, char ** argv) {
 						break;
 
 					case EBUSY:
-						printf(gettext("rDevice is busy, so we wait a few seconds before restarting\n"));
+						printf(gettext("Device is busy, so we wait a few seconds before restarting\n"));
 						sleep(8);
 
 						print_time();
@@ -435,7 +435,7 @@ int main(int argc, char ** argv) {
 				speed /= time_spent;
 				convert_size(buffer_size, 16, speed);
 
-				printf(gettext("\r%*s\r"), last_width, clean_line);
+				printf("\r%*s\r", last_width, clean_line);
 				printf(gettext("loop: %lld, current speed %s, done: %.2f%%%n"), i, buffer_size, pct / nb_loop, &last_width);
 				fflush(stdout);
 
@@ -443,7 +443,7 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-		printf(gettext("\r%*s\r"), last_width, clean_line);
+		printf("\r%*s\r", last_width, clean_line);
 
 		struct timeval end;
 		gettimeofday(&end, 0);
@@ -490,7 +490,7 @@ int main(int argc, char ** argv) {
 				rewind_tape(fd_tape);
 			} else {
 				print_time();
-				print_flush("Moving backward space 1 file... ");
+				print_flush(gettext("Moving backward space 1 file... "));
 
 				static struct mtop rewind = { MTBSFM, 2 };
 				failed = ioctl(fd_tape, MTIOCTOP, &rewind);
@@ -613,7 +613,7 @@ static bool rewind_tape(int fd) {
 	int failed = ioctl(fd, MTIOCTOP, &rewind);
 
 	if (failed != 0)
-		printf(gettext("Rewind failed => %m\n"));
+		printf(gettext("failed => %m\n"));
 	else
 		printf(gettext(", done\n"));
 
