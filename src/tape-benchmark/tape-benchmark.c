@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Mon, 06 Oct 2014 22:32:31 +0200                           *
+*  Last modified: Mon, 06 Oct 2014 23:51:08 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -160,7 +160,7 @@ int main(int argc, char ** argv) {
 	bool rewind = false;
 
 	setlocale(LC_ALL, "");
-	bindtextdomain("foo", "locale");
+	bindtextdomain("tape-benchmark", "locale");
 	textdomain("tape-benchmark");
 
 	ssize_t max_buffer_size = MAX_BUFFER_SIZE;
@@ -368,7 +368,7 @@ int main(int argc, char ** argv) {
 			if (poll_retry == 0)
 				printf(gettext("Device is no ready, so we wait until"));
 			else
-				printf(gettext("."));
+				printf(".");
 			fflush(stdout);
 			poll_retry++;
 
@@ -597,7 +597,7 @@ static void print_time() {
 	char buf_time[32];
 	strftime(buf_time, 32, gettext("[ %T ] "), localtime(&now.tv_sec));
 
-	printf(gettext("%s"), buf_time);
+	printf("%s", buf_time);
 }
 
 /**
