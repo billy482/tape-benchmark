@@ -5,4 +5,6 @@ TAPEBENCHMARK_LD			:= $(shell ./script/check-link.sh gettime.c -lrt)
 
 TAPEBENCHMARK_CHCKSUM_FILE	:= tape-benchmark.chcksum
 
+TAPEBENCHMARK_LOCALE		:= tape-benchmark
+
 BIN_SYMS					+= TAPEBENCHMARK

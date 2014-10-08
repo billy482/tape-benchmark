@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 07 Oct 2014 01:03:34 +0200                           *
+*  Last modified: Wed, 08 Oct 2014 21:25:31 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -160,7 +160,7 @@ int main(int argc, char ** argv) {
 	bool rewind = false;
 
 	setlocale(LC_ALL, "");
-	bindtextdomain("tape-benchmark", "locale");
+	bindtextdomain("tape-benchmark", "/usr/share/locale/");
 	textdomain("tape-benchmark");
 
 	ssize_t max_buffer_size = MAX_BUFFER_SIZE;

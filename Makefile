@@ -36,8 +36,8 @@ HEAD_FILES	:= $(sort $(shell test -d include && find include -name '*.h'))
 DEP_FILES	:=
 OBJ_FILES	:=
 
-TEST_SRC_FILES	:=
-TEST_HEAD_FILES	:=
+LOCALE_FILE		:=
+LOCALE_FILES	:=
 
 ifndef (${DESTDIR})
 DESTDIR   := output
@@ -71,14 +71,25 @@ $(1)_HEAD_FILES	:= $$(sort $$(shell test -d $${$(1)_SRC_DIR} && find $${$(1)_SRC
 $(1)_OBJ_FILES	:= $$(sort $$(patsubst src/%.c,${BUILD_DIR}/%.o,$${$(1)_SRC_FILES}))
 $(1)_DEP_FILES	:= $$(sort $$(shell test -d $${$(1)_DEPEND_DIR} && find $${$(1)_DEPEND_DIR} -name '*.d'))
 
+$(1)_LOCALE_FILES := $$(sort $$(shell test -d locale && find -name $${$(1)_LOCALE}.*.po))
+
 prepare_$(1): ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE}
 
 ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE}: $${$(1)_SRC_FILES} $${$(1)_HEAD_FILES}
-	@echo " CHCKSUM  $$@"
+	@echo " CHCKSUM   $$@"
 	@./script/checksum.pl $(1) ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE} $$(sort $${$(1)_SRC_FILES} $${$(1)_HEAD_FILES})
 
-$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES)
-	@echo " LD       $$@"
+locale/$$($(1)_LOCALE).pot: $$($(1)_SRC_FILES)
+	@echo " XGETTEXT  $${$(1)_LOCALE}.pot"
+	@xgettext -d $$($(1)_LOCALE) -o $$@ -i -w 128 -s $$($(1)_SRC_FILES)
+
+$$($(1)_LOCALE_FILES): locale/$$($(1)_LOCALE).pot
+	@echo " MSGMERGE  $$(@F)"
+	@msgmerge -q -U -i -w 128 $$@ $$<
+	@touch $$@
+
+$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES) $$($(1)_LOCALE_FILES)
+	@echo " LD        $$@"
 	@${CC} -o $$@ $$($(1)_OBJ_FILES) ${LDFLAGS} $$($(1)_LD)
 #	@${OBJCOPY} --only-keep-debug $$@ $$@.debug
 #	@${STRIP} $$@
@@ -86,7 +97,7 @@ $$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES)
 #	@chmod -x $$@.debug
 
 $$($(1)_LIB): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES)
-	@echo " LD       $$@"
+	@echo " LD        $$@"
 	@${CC} -o $$@.$$($(1)_LIB_VERSION) $$($(1)_OBJ_FILES) -shared -Wl,-soname,$$($(1)_SONAME) ${LDFLAGS} $$($(1)_LD)
 	@objcopy --only-keep-debug $$@.$$($(1)_LIB_VERSION) $$@.$$($(1)_LIB_VERSION).debug
 	@strip $$@.$$($(1)_LIB_VERSION)
@@ -96,7 +107,7 @@ $$($(1)_LIB): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES)
 	@ln -sf $$($(1)_SONAME) $$@
 
 $$($(1)_BUILD_DIR)/%.o: $$($(1)_SRC_DIR)/%.c
-	@echo " CC       $$@"
+	@echo " CC        $$@"
 	@${CC} -c $${CFLAGS} $$($(1)_CFLAG) -Wp,-MD,$$($(1)_DEPEND_DIR)/$$*.d,-MT,$$@ -o $$@ $$<
 
 BINS		+= $$($(1)_BIN) $$($(1)_LIB)
@@ -104,6 +115,9 @@ SRC_FILES	+= $$($(1)_SRC_FILES)
 HEAD_FILES	+= $$($(1)_HEAD_FILES)
 DEP_FILES	+= $$($(1)_DEP_FILES)
 OBJ_FILES	+= $$($(1)_OBJ_FILES)
+
+LOCALE_FILE		+= locale/$$($(1)_LOCALE).pot
+LOCALE_FILES	+= $$($(1)_LOCALE_FILES)
 endef
 
 $(foreach prog,${BIN_SYMS},$(eval $(call BIN_template,${prog})))
@@ -116,7 +130,7 @@ DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 
 # phony target
 .DEFAULT_GOAL	:= all
-.PHONY: all binaries clean clean-depend cscope ctags debug distclean install lib package prepare realclean stat stat-extra TAGS tar
+.PHONY: all binaries clean clean-depend cscope ctags debug distclean install lib locales package prepare realclean stat stat-extra TAGS tar
 .NOTPARALLEL: prepare
 
 all: binaries cscope tags
@@ -129,11 +143,11 @@ check:
 #-@${CC} -fsyntax-only ${CFLAGS} ${SRC_FILES}
 
 clean:
-	@echo ' RM       -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR}'
+	@echo ' RM        -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR}'
 	@rm -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR}
 
 clean-depend:
-	@echo ' RM       -Rf depend'
+	@echo ' RM        -Rf depend'
 	@rm -Rf depend
 
 cscope: cscope.out
@@ -145,7 +159,7 @@ debug: binaries
 	${GDB} bin/tape-benchmark
 
 distclean realclean: clean
-	@echo ' RM       -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}'
+	@echo ' RM        -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}'
 	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}
 
 doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
@@ -153,13 +167,16 @@ doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
 	@${DOXYGEN}
 
 install: all
-	@echo ' MKDIR     ${DESTDIR}'
-	@mkdir -p ${DESTDIR}/etc/bash_completion.d ${DESTDIR}/usr/bin ${DESTDIR}/usr/share/man/fr/man1 ${DESTDIR}/usr/share/man/man1
+	@echo ' MKDIR      ${DESTDIR}'
+	@mkdir -p ${DESTDIR}/etc/bash_completion.d ${DESTDIR}/usr/bin ${DESTDIR}/usr/share/man/fr/man1 ${DESTDIR}/usr/share/man/man1 ${DESTDIR}/usr/share/locale
 	@echo ' CP'
 	@cp script/tape-benchmark ${DESTDIR}/etc/bash_completion.d
 	@cp bin/tape-benchmark ${DESTDIR}/usr/bin
 	@cp doc/tape-benchmark.1 ${DESTDIR}/usr/share/man/man1
 	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1/tape-benchmark.1
+	@./script/copy-locales.pl ${DESTDIR}/usr/share/locale locale/*.po
+
+locales: ${LOCALE_FILES}
 
 package:
 	@echo ' CLEAN'
@@ -183,14 +200,14 @@ tar: ${NAME}.tar.bz2
 
 # real target
 ${BIN_DIRS} ${CHCKSUM_DIR} ${DEP_DIRS} ${OBJ_DIRS}:
-	@echo " MKDIR    $@"
+	@echo " MKDIR     $@"
 	@mkdir -p $@
 
 ${NAME}.tar.bz2:
 	${GIT} archive --format=tar --prefix=${DIR_NAME}/ master | bzip2 -9c > $@
 
 ${VERSION_FILE}: ${GIT_HEAD}
-	@echo ' GEN      ${VERSION_FILE}'
+	@echo ' GEN       ${VERSION_FILE}'
 	@./script/version.pl ${VERSION_OPT}
 
 cscope.out: ${SRC_FILES} ${HEAD_FILES}
