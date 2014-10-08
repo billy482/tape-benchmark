@@ -37,7 +37,8 @@ DEP_FILES	:=
 OBJ_FILES	:=
 
 LOCALE_FILE		:=
-LOCALE_FILES	:=
+LOCALE_FILE_PO	:=
+LOCALE_FILE_MO	:=
 
 ifndef (${DESTDIR})
 DESTDIR   := output
@@ -71,7 +72,8 @@ $(1)_HEAD_FILES	:= $$(sort $$(shell test -d $${$(1)_SRC_DIR} && find $${$(1)_SRC
 $(1)_OBJ_FILES	:= $$(sort $$(patsubst src/%.c,${BUILD_DIR}/%.o,$${$(1)_SRC_FILES}))
 $(1)_DEP_FILES	:= $$(sort $$(shell test -d $${$(1)_DEPEND_DIR} && find $${$(1)_DEPEND_DIR} -name '*.d'))
 
-$(1)_LOCALE_FILES := $$(sort $$(shell test -d locale && find -name $${$(1)_LOCALE}.*.po))
+$(1)_LOCALE_FILES_PO	:= $$(sort $$(shell test -d locale && find -name $${$(1)_LOCALE}.*.po))
+$(1)_LOCALE_FILES_MO	:= $$(patsubst %.po,%.mo,$$($(1)_LOCALE_FILES_PO))
 
 prepare_$(1): ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE}
 
@@ -83,12 +85,16 @@ locale/$$($(1)_LOCALE).pot: $$($(1)_SRC_FILES)
 	@echo " XGETTEXT  $${$(1)_LOCALE}.pot"
 	@xgettext -d $$($(1)_LOCALE) -o $$@ -i -w 128 -s $$($(1)_SRC_FILES)
 
-$$($(1)_LOCALE_FILES): locale/$$($(1)_LOCALE).pot
+$$($(1)_LOCALE_FILES_PO): locale/$$($(1)_LOCALE).pot
 	@echo " MSGMERGE  $$(@F)"
 	@msgmerge -q -U -i -w 128 $$@ $$<
 	@touch $$@
 
-$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES) $$($(1)_LOCALE_FILES)
+%.mo: %.po
+	@echo " MSGFMT    $$(@F)"
+	@msgfmt -f --check --output-file $$@ $$<
+
+$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES) $$($(1)_LOCALE_FILES_MO)
 	@echo " LD        $$@"
 	@${CC} -o $$@ $$($(1)_OBJ_FILES) ${LDFLAGS} $$($(1)_LD)
 #	@${OBJCOPY} --only-keep-debug $$@ $$@.debug
@@ -117,7 +123,8 @@ DEP_FILES	+= $$($(1)_DEP_FILES)
 OBJ_FILES	+= $$($(1)_OBJ_FILES)
 
 LOCALE_FILE		+= locale/$$($(1)_LOCALE).pot
-LOCALE_FILES	+= $$($(1)_LOCALE_FILES)
+LOCALE_FILES_PO	+= $$($(1)_LOCALE_FILES_PO)
+LOCALE_FILES_MO	+= $$($(1)_LOCALE_FILES_MO)
 endef
 
 $(foreach prog,${BIN_SYMS},$(eval $(call BIN_template,${prog})))
@@ -159,8 +166,8 @@ debug: binaries
 	${GDB} bin/tape-benchmark
 
 distclean realclean: clean
-	@echo ' RM        -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}'
-	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE}
+	@echo ' RM        -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILES_MO}'
+	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILES_MO}
 
 doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
 	@echo ' DOXYGEN'
@@ -174,7 +181,7 @@ install: all
 	@cp bin/tape-benchmark ${DESTDIR}/usr/bin
 	@cp doc/tape-benchmark.1 ${DESTDIR}/usr/share/man/man1
 	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1/tape-benchmark.1
-	@./script/copy-locales.pl ${DESTDIR}/usr/share/locale locale/*.po
+	@./script/copy-locales.pl ${DESTDIR}/usr/share/locale locale/*.mo
 
 locales: ${LOCALE_FILES}
 
