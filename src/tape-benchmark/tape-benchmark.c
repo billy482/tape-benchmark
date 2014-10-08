@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Wed, 08 Oct 2014 21:25:31 +0200                           *
+*  Last modified: Wed, 08 Oct 2014 22:59:01 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -33,7 +33,7 @@
 #include <getopt.h>
 // bindtextdomain, gettext
 #include <libintl.h>
-// setlocale
+// localeconv, setlocale
 #include <locale.h>
 // poll
 #include <poll.h>
@@ -138,12 +138,13 @@ static void convert_size(char * str, unsigned int str_len, ssize_t size) {
 			snprintf(str, str_len, gettext("%.*f TBytes"), fixed, tsize);
 	}
 
-	if (strchr(str, '.') != NULL) {
+	struct lconv * locale_info = localeconv();
+	if (strstr(str, locale_info->decimal_point) != NULL) {
 		char * ptrEnd = strchr(str, ' ');
 		char * ptrBegin = ptrEnd - 1;
 		while (*ptrBegin == '0')
 			ptrBegin--;
-		if (*ptrBegin == '.')
+		if (strncmp(ptrBegin, locale_info->decimal_point, strlen(locale_info->decimal_point)) == 0)
 			ptrBegin--;
 
 		if (ptrBegin + 1 < ptrEnd)
