@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 23:26:58 +0200                           *
+*  Last modified: Fri, 10 Oct 2014 23:39:21 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -250,9 +250,14 @@ int main(int argc, char ** argv) {
 			failed = tb_scsi_do_inquery(scsi_fd, &info);
 			close(scsi_fd);
 
+			tb_print_time();
 			printf(gettext("Tape vendor: %s\n"), info.vendor);
+			tb_print_time();
 			printf(gettext("Model: %s\n"), info.model);
+			tb_print_time();
 			printf(gettext("Revision: %s\n"), info.revision);
+			tb_print_time();
+			printf(gettext("Serial number: %s\n"), info.serial_number);
 		}
 
 		free(scsi_file);

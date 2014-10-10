@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 23:27:08 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 00:03:56 +0200                           *
 \***************************************************************************/
 
 #define _GNU_SOURCE
@@ -183,6 +183,43 @@ int tb_scsi_do_inquery(int fd, struct tb_scsi_inquery * data) {
 	strncpy(data->revision, result_inquiry.product_revision_level, 4);
 	data->revision[4] = '\0';
 	tb_string_rtim(data->revision, ' ');
+
+	struct {
+		unsigned char peripheral_device_type:5;
+		unsigned char peripheral_device_qualifier:3;
+		unsigned char page_code;
+		unsigned char reserved;
+		unsigned char page_length;
+		char unit_serial_number[12];
+	} __attribute__((packed)) result_serial_number;
+
+	struct scsi_inquiry command_serial_number = {
+		.operation_code = 0x12, // INQUIRY
+		.enable_vital_product_data = true,
+		.page_code = 0x80, // UNIT SERIAL NUMBER
+		.allocation_length = sizeof(result_serial_number),
+	};
+
+	memset(&header, 0, sizeof(header));
+	memset(&sense, 0, sizeof(sense));
+	memset(&result_serial_number, 0, sizeof(result_serial_number));
+
+	header.interface_id = 'S';
+	header.cmd_len = sizeof(command_serial_number);
+	header.mx_sb_len = sizeof(sense);
+	header.dxfer_len = sizeof(result_serial_number);
+	header.cmdp = (unsigned char *) &command_serial_number;
+	header.sbp = (unsigned char *) &sense;
+	header.dxferp = (unsigned char *) &result_serial_number;
+	header.timeout = 60000; // 1 minutes
+	header.dxfer_direction = SG_DXFER_FROM_DEV;
+
+	if (ioctl(fd, SG_IO, &header))
+		return -1;
+
+	strncpy(data->serial_number, result_serial_number.unit_serial_number, 12);
+	data->serial_number[12] = '\0';
+	tb_string_rtim(data->serial_number, ' ');
 
 	return 0;
 }
