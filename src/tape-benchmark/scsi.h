@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 22:32:11 +0200                           *
+*  Last modified: Fri, 10 Oct 2014 23:26:59 +0200                           *
 \***************************************************************************/
 
 #ifndef __TAPEBENCHMARK_SCSI_H__
@@ -36,7 +36,7 @@ struct tb_scsi_inquery {
 };
 
 int tb_scsi_do_inquery(int fd, struct tb_scsi_inquery * data);
-const char * tb_scsi_lookup_scsi_file(const char * file);
+char * tb_scsi_lookup_scsi_file(const char * file);
 
 #endif
 

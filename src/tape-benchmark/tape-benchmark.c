@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Wed, 08 Oct 2014 22:59:01 +0200                           *
+*  Last modified: Fri, 10 Oct 2014 23:26:58 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -39,7 +39,7 @@
 #include <poll.h>
 // fflush, printf
 #include <stdio.h>
-// malloc
+// free, malloc
 #include <stdlib.h>
 // memset
 #include <string.h>
@@ -58,6 +58,7 @@
 // close, read, sleep, write
 #include <unistd.h>
 
+#include "scsi.h"
 #include "util.h"
 
 #include "tape-benchmark.version"
@@ -238,6 +239,24 @@ int main(int argc, char ** argv) {
 
 	if (rewind && !rewind_tape(fd_tape))
 		return 2;
+
+	char * scsi_file = tb_scsi_lookup_scsi_file(device);
+	if (scsi_file != NULL) {
+		int scsi_fd = open(scsi_file, O_RDONLY);
+		if (scsi_fd < 0) {
+			printf(gettext("Failed to open scsi device because %m\n"));
+		} else {
+			static struct tb_scsi_inquery info;
+			failed = tb_scsi_do_inquery(scsi_fd, &info);
+			close(scsi_fd);
+
+			printf(gettext("Tape vendor: %s\n"), info.vendor);
+			printf(gettext("Model: %s\n"), info.model);
+			printf(gettext("Revision: %s\n"), info.revision);
+		}
+
+		free(scsi_file);
+	}
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 

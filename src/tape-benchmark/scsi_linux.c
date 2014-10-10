@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 22:52:56 +0200                           *
+*  Last modified: Fri, 10 Oct 2014 23:27:08 +0200                           *
 \***************************************************************************/
 
 #define _GNU_SOURCE
@@ -187,7 +187,7 @@ int tb_scsi_do_inquery(int fd, struct tb_scsi_inquery * data) {
 	return 0;
 }
 
-const char * tb_scsi_lookup_scsi_file(const char * file) {
+char * tb_scsi_lookup_scsi_file(const char * file) {
 	if (file == NULL)
 		return NULL;
 
