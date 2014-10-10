@@ -31,21 +31,17 @@
 #include <fcntl.h>
 // getopt_long
 #include <getopt.h>
-// bindtextdomain, gettext
+// bindtextdomain, gettext, textdomain
 #include <libintl.h>
-// localeconv, setlocale
+// setlocale
 #include <locale.h>
 // poll
 #include <poll.h>
-// va_end, va_start
-#include <stdarg.h>
-// bool
-#include <stdbool.h>
-// fflush, printf, sscanf, snprintf, vprintf
+// fflush, printf
 #include <stdio.h>
 // malloc
 #include <stdlib.h>
-// memmove, memset, strlen, strrchr
+// memset
 #include <string.h>
 // ioctl
 #include <sys/ioctl.h>
@@ -57,10 +53,12 @@
 #include <sys/time.h>
 // open
 #include <sys/types.h>
-// clock_gettime, difftime, localtime, strftime
+// clock_gettime, difftime
 #include <time.h>
 // close, read, sleep, write
 #include <unistd.h>
+
+#include "util.h"
 
 #include "tape-benchmark.version"
 #include "tape-benchmark.chcksum"
@@ -70,87 +68,8 @@
 #define MIN_BUFFER_SIZE 16384L
 #define MAX_BUFFER_SIZE 262144L
 
-static bool check_size(ssize_t size);
-static void convert_size(char * str, unsigned int str_len, ssize_t size);
-static ssize_t parse_size(const char * size);
-static void print_flush(const char * format, ...) __attribute__((format(printf, 1, 2)));
-static void print_time(void);
 static bool rewind_tape(int fd);
 
-/**
- * \brief Check if \a size is a power of two
- * \param size[in]: size in byte
- * \return \b true if \a size is a power of two
- */
-static bool check_size(ssize_t size) {
-	if (size < 0)
-		return false;
-
-	int i = 0;
-	ssize_t tsize = size;
-
-	while (tsize > 1) {
-		tsize >>= 1;
-		i++;
-	}
-
-	if (size != (tsize << i))
-		return false;
-
-	return true;
-}
-
-/**
- * \brief Convert size into string
- * \param str[out]: write \a size into it
- * \param str_len[in]: length of \a str
- * \param size[in]: \a size to be converted into string
- */
-static void convert_size(char * str, unsigned int str_len, ssize_t size) {
-	unsigned short mult = 0;
-	double tsize = size;
-
-	while (tsize >= 8192 && mult < 4) {
-		tsize /= 1024;
-		mult++;
-	}
-
-	int fixed = 0;
-	if (tsize < 10)
-		fixed = 2;
-	else if (tsize < 100)
-		fixed = 1;
-
-	switch (mult) {
-		case 0:
-			snprintf(str, str_len, gettext("%zd Bytes"), size);
-			break;
-		case 1:
-			snprintf(str, str_len, gettext("%.*f KBytes"), fixed, tsize);
-			break;
-		case 2:
-			snprintf(str, str_len, gettext("%.*f MBytes"), fixed, tsize);
-			break;
-		case 3:
-			snprintf(str, str_len, gettext("%.*f GBytes"), fixed, tsize);
-			break;
-		default:
-			snprintf(str, str_len, gettext("%.*f TBytes"), fixed, tsize);
-	}
-
-	struct lconv * locale_info = localeconv();
-	if (strstr(str, locale_info->decimal_point) != NULL) {
-		char * ptrEnd = strchr(str, ' ');
-		char * ptrBegin = ptrEnd - 1;
-		while (*ptrBegin == '0')
-			ptrBegin--;
-		if (strncmp(ptrBegin, locale_info->decimal_point, strlen(locale_info->decimal_point)) == 0)
-			ptrBegin--;
-
-		if (ptrBegin + 1 < ptrEnd)
-			memmove(ptrBegin + 1, ptrEnd, strlen(ptrEnd) + 1);
-	}
-}
 
 int main(int argc, char ** argv) {
 	static char * buffer[32];
@@ -209,11 +128,11 @@ int main(int argc, char ** argv) {
 				printf("tape-benchmark (" TAPEBENCHMARK_VERSION ")\n");
 				printf(gettext("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n"), DEFAULT_DEVICE);
 				printf(gettext("  -h, --help                 : show this and quit\n"));
-				convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
+				tb_convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
 				printf(gettext("  -M, --max-buffer-size=SIZE : maximum block size (instead of %s)\n"), buffer_size);
-				convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
+				tb_convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
 				printf(gettext("  -m, --min-buffer-size=SIZE : minimum block size (instead of %s)\n"), buffer_size);
-				convert_size(buffer_size, 16, DEFAULT_SIZE);
+				tb_convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf(gettext("  -s, --size=SIZE            : size of file (default: %s)\n"), buffer_size);
 				printf(gettext("  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"));
 				printf(gettext("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n"));
@@ -229,11 +148,11 @@ int main(int argc, char ** argv) {
 				return 0;
 
 			case OPT_MAX_BUFFER:
-				tmp_size = parse_size(optarg);
+				tmp_size = tb_parse_size(optarg);
 				if (tmp_size == -1) {
 					printf(gettext("Error: invalid block size for max-buffer-size\n"));
 					return 1;
-				} else if (tmp_size > 0 && check_size(tmp_size)) {
+				} else if (tmp_size > 0 && tb_check_size(tmp_size)) {
 					max_buffer_size = tmp_size;
 				} else {
 					printf(gettext("Error: max-buffer-size should be positive and a power of two\n"));
@@ -242,11 +161,11 @@ int main(int argc, char ** argv) {
 				break;
 
 			case OPT_MIN_BUFFER:
-				tmp_size = parse_size(optarg);
+				tmp_size = tb_parse_size(optarg);
 				if (tmp_size == -1) {
 					printf(gettext("Error: invalid block size for min-buffer-size\n"));
 					return 1;
-				} else if (tmp_size > 0 && check_size(tmp_size)) {
+				} else if (tmp_size > 0 && tb_check_size(tmp_size)) {
 					min_buffer_size = tmp_size;
 				} else {
 					printf(gettext("Error: min-buffer-size should be positive and a power of two\n"));
@@ -259,7 +178,7 @@ int main(int argc, char ** argv) {
 				break;
 
 			case OPT_SIZE:
-				tmp_size = parse_size(optarg);
+				tmp_size = tb_parse_size(optarg);
 				if (tmp_size == -1) {
 					printf(gettext("Error: invalid file size\n"));
 					return 1;
@@ -285,8 +204,8 @@ int main(int argc, char ** argv) {
 		}
 	}
 
-	print_time();
-	print_flush(gettext("Openning \"%s\"... "), device);
+	tb_print_time();
+	tb_print_flush(gettext("Openning \"%s\"... "), device);
 	int fd_tape = open(device, O_RDONLY);
 	if (fd_tape < 0) {
 		printf(gettext("failed!!!, because %m\n"));
@@ -322,8 +241,8 @@ int main(int argc, char ** argv) {
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
-	print_time();
-	print_flush(gettext("Generate random data from \"/dev/urandom\"... "));
+	tb_print_time();
+	tb_print_flush(gettext("Generate random data from \"/dev/urandom\"... "));
 	int fd_ran = open("/dev/urandom", O_RDONLY);
 	if (fd_ran < 0) {
 		printf(gettext("Failed to open because %m\n"));
@@ -383,9 +302,9 @@ int main(int argc, char ** argv) {
 		gettimeofday(&time_start, NULL);
 
 		ssize_t nb_loop = size / write_size;
-		convert_size(buffer_size, 16, write_size);
+		tb_convert_size(buffer_size, 16, write_size);
 
-		print_time();
+		tb_print_time();
 		printf(gettext("Starting, nb loop: %zd, block size: %s\n"), nb_loop, buffer_size);
 
 		struct timespec start, last, current;
@@ -403,7 +322,7 @@ int main(int argc, char ** argv) {
 
 				switch (errno) {
 					case EINVAL:
-						convert_size(buffer_size, 16, write_size >> 1);
+						tb_convert_size(buffer_size, 16, write_size >> 1);
 						printf(gettext("It seems that you cannot use a block size greater than %s\n"), buffer_size);
 						break;
 
@@ -411,7 +330,7 @@ int main(int argc, char ** argv) {
 						printf(gettext("Device is busy, so we wait a few seconds before restarting\n"));
 						sleep(8);
 
-						print_time();
+						tb_print_time();
 						printf(gettext("Restarting, nb loop: %zd, block size: %s\n"), nb_loop, buffer_size);
 						i = -1;
 
@@ -434,7 +353,7 @@ int main(int argc, char ** argv) {
 				double time_spent = difftime(current.tv_sec, start.tv_sec);
 				double speed = i * write_size;
 				speed /= time_spent;
-				convert_size(buffer_size, 16, speed);
+				tb_convert_size(buffer_size, 16, speed);
 
 				printf("\r%*s\r", last_width, clean_line);
 				printf(gettext("loop: %lld, current speed %s, done: %.2f%%%n"), i, buffer_size, pct / nb_loop, &last_width);
@@ -454,9 +373,9 @@ int main(int argc, char ** argv) {
 		double time_spent = difftime(current.tv_sec, start.tv_sec);
 		double speed = i * write_size;
 		speed /= time_spent;
-		convert_size(buffer_size, 16, speed);
+		tb_convert_size(buffer_size, 16, speed);
 
-		print_time();
+		tb_print_time();
 		printf(gettext("Finished, current speed %s\n"), buffer_size);
 
 		struct mtget mt2;
@@ -490,8 +409,8 @@ int main(int argc, char ** argv) {
 			if (mt.mt_fileno < 2) {
 				rewind_tape(fd_tape);
 			} else {
-				print_time();
-				print_flush(gettext("Moving backward space 1 file... "));
+				tb_print_time();
+				tb_print_flush(gettext("Moving backward space 1 file... "));
 
 				static struct mtop rewind = { MTBSFM, 2 };
 				failed = ioctl(fd_tape, MTIOCTOP, &rewind);
@@ -519,89 +438,6 @@ int main(int argc, char ** argv) {
 }
 
 /**
- * \brief Convert size from string to integer
- * \param size[in]: string representing a size
- * \return \a size or \b -1 if failed
- */
-static ssize_t parse_size(const char * size) {
-	double dsize = 0;
-	ssize_t lsize = 0;
-	char mult = '\0';
-
-	static const struct {
-		char * pat;
-		short nbElt;
-	} pattern[] = {
-		{ "%lg %c", 2 },
-		{ "%lg%c",  2 },
-		{ "%llu",   1 },
-
-		{ 0, 0},
-	};
-
-	int i;
-	for (i = 0; pattern[i].pat; i++) {
-		if (pattern[i].nbElt == 2 && sscanf(size, pattern[i].pat, &dsize, &mult) == 2) {
-			if (dsize < 0)
-				return -1;
-			if (mult == ' ')
-				continue;
-
-			switch (mult) {
-				case 'k':
-				case 'K':
-					dsize *= 1024;
-					break;
-
-				case 'm':
-				case 'M':
-					dsize *= 1048576;
-					break;
-
-				case 'g':
-				case 'G':
-					dsize *= 1073741824;
-					break;
-			}
-			return (unsigned long long) dsize;
-		} else if (pattern[i].nbElt == 1 && sscanf(size, pattern[i].pat, &lsize) == 1) {
-			if (mult == ' ')
-				continue;
-
-			return lsize > 0 ? 1L << lsize : -1;
-		}
-	}
-
-	return -1;
-}
-
-/**
- * \brief print_flush is a shortcut of printf(format, ...) then fflush(stdout)
- * \param format[in]: printf compatible format
- */
-static void print_flush(const char * format, ...) {
-	va_list va;
-	va_start(va, format);
-	vprintf(format, va);
-	va_end(va);
-
-	fflush(stdout);
-}
-
-/**
- * \brief print current time to stdout
- */
-static void print_time() {
-	struct timespec now;
-	clock_gettime(CLOCK_REALTIME, &now);
-
-	char buf_time[32];
-	strftime(buf_time, 32, gettext("[ %T ] "), localtime(&now.tv_sec));
-
-	printf("%s", buf_time);
-}
-
-/**
  * \brief rewind tape
  * \param fd[in]: valid file descriptor
  * \return true if success
@@ -609,7 +445,7 @@ static void print_time() {
 static bool rewind_tape(int fd) {
 	static struct mtop rewind = { MTREW, 1 };
 
-	print_flush(gettext("Rewinding tape... "));
+	tb_print_flush(gettext("Rewinding tape... "));
 
 	int failed = ioctl(fd, MTIOCTOP, &rewind);
 

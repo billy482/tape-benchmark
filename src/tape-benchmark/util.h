@@ -28,6 +28,44 @@
 #ifndef __TAPEBENCHMARK_UTIL_H__
 #define __TAPEBENCHMARK_UTIL_H__
 
+// bool
+#include <stdbool.h>
+// ssize_t
+#include <sys/types.h>
+
+/**
+ * \brief Check if \a size is a power of two
+ * \param size[in]: size in byte
+ * \return \b true if \a size is a power of two
+ */
+bool tb_check_size(ssize_t size);
+
+/**
+ * \brief Convert size into string
+ * \param str[out]: write \a size into it
+ * \param str_len[in]: length of \a str
+ * \param size[in]: \a size to be converted into string
+ */
+void tb_convert_size(char * str, unsigned int str_len, ssize_t size);
+
+/**
+ * \brief Convert size from string to integer
+ * \param size[in]: string representing a size
+ * \return \a size or \b -1 if failed
+ */
+ssize_t tb_parse_size(const char * size);
+
+/**
+ * \brief print_flush is a shortcut of printf(format, ...) then fflush(stdout)
+ * \param format[in]: printf compatible format
+ */
+void tb_print_flush(const char * format, ...) __attribute__((format(printf, 1, 2)));
+
+/**
+ * \brief print current time to stdout
+ */
+void tb_print_time(void);
+
 void tb_string_rtim(char * string, char chr);
 
 #endif
