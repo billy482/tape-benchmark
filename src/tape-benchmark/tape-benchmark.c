@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 13:49:15 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 13:55:13 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -284,8 +284,10 @@ int main(int argc, char ** argv) {
 		size_t line_length = 0;
 		ssize_t nb_read = getline(&line, &line_length, stdin);
 
-		if (nb_read < 0)
+		if (nb_read < 0) {
+			printf(gettext("\nBye !!!\n"));
 			return 0;
+		}
 
 		failed = rpmatch(line);
 		if (failed == 0)
