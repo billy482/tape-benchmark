@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 13:55:13 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 14:05:08 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -290,8 +290,10 @@ int main(int argc, char ** argv) {
 		}
 
 		failed = rpmatch(line);
-		if (failed == 0)
+		if (failed == 0) {
+			printf(gettext("\nBye !!!\n"));
 			return 0;
+		}
 	} while (failed < 0);
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
