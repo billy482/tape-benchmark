@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 14:19:24 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 14:21:29 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -280,6 +280,7 @@ int main(int argc, char ** argv) {
 	}
 
 	do {
+		tb_print_time();
 		printf(gettext("Do you want to start benchmark ? "));
 		fflush(stdout);
 
