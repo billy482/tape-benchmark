@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 14:07:20 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 14:19:24 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -211,6 +211,9 @@ int main(int argc, char ** argv) {
 				return 0;
 		}
 	}
+
+	tb_print_time();
+	tb_print_flush("tape-benchmark: " TAPEBENCHMARK_VERSION "\n");
 
 	tb_print_time();
 	tb_print_flush(gettext("Openning \"%s\"... "), device);
@@ -490,6 +493,11 @@ int main(int argc, char ** argv) {
 
 	for (j = 0; j < 32; j++)
 		free(buffer[j]);
+
+	tb_print_time();
+	printf(gettext("tape-benchmark exit now\n"));
+	tb_print_time();
+	printf(gettext("Bye !!!\n"));
 
 	return 0;
 }
