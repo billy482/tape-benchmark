@@ -4,9 +4,9 @@
 # Automatically generated, 2014.
 #
 msgid   ""
-msgstr  "Project-Id-Version: v0.3.3-23-gf523f61\n"
+msgstr  "Project-Id-Version: v0.3.3-24-g35118b4\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2014-10-11 14:04+0200\n"
+        "POT-Creation-Date: 2014-10-11 14:07+0200\n"
         "PO-Revision-Date: 2014-10-06 22:43+0200\n"
         "Last-Translator: Automatically generated\n"
         "Language-Team: none\n"
@@ -16,7 +16,7 @@ msgstr  "Project-Id-Version: v0.3.3-23-gf523f61\n"
         "Content-Transfer-Encoding: 8bit\n"
         "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/tape-benchmark/tape-benchmark.c:288 src/tape-benchmark/tape-benchmark.c:294
+#: src/tape-benchmark/tape-benchmark.c:288
 #, c-format
 msgid   "\n"
         "Bye !!!\n"
@@ -144,6 +144,11 @@ msgstr  ", fait\n"
 msgid   "Another way to set the size is by specifying an integer which will be interpreted as a power of two.\n"
 msgstr  "Une autre façon de définir la taille est de spécifier celle-ci par un entier qui sera interprété comme une puissance "
         "de deux.\n"
+
+#: src/tape-benchmark/tape-benchmark.c:294
+#, fuzzy, c-format
+msgid   "Bye !!!\n"
+msgstr  "Salut !!!\n"
 
 #: src/tape-benchmark/tape-benchmark.c:148
 #, c-format

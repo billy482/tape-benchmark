@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 14:05:08 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 14:07:20 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -291,7 +291,7 @@ int main(int argc, char ** argv) {
 
 		failed = rpmatch(line);
 		if (failed == 0) {
-			printf(gettext("\nBye !!!\n"));
+			printf(gettext("Bye !!!\n"));
 			return 0;
 		}
 	} while (failed < 0);
