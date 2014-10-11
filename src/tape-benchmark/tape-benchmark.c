@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 23:39:21 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 11:16:26 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -76,6 +76,7 @@ int main(int argc, char ** argv) {
 	static char * buffer[32];
 	static char buffer_size[16];
 	const char * device = DEFAULT_DEVICE;
+	bool inquiry_only = false;
 	ssize_t size = DEFAULT_SIZE;
 	bool no_rewind = false;
 	bool rewind = false;
@@ -91,6 +92,7 @@ int main(int argc, char ** argv) {
 	enum {
 		OPT_DEVICE     = 'd',
 		OPT_HELP       = 'h',
+		OPT_INQUIRY    = 'i',
 		OPT_MAX_BUFFER = 'M',
 		OPT_MIN_BUFFER = 'm',
 		OPT_NO_REWIND  = 'r',
@@ -114,7 +116,7 @@ int main(int argc, char ** argv) {
 
 	static int lo;
 	for (;;) {
-		int c = getopt_long(argc, argv, "d:hm:M:s:rRV?", op, &lo);
+		int c = getopt_long(argc, argv, "d:him:M:s:rRV?", op, &lo);
 
 		if (c == -1)
 			break;
@@ -129,6 +131,7 @@ int main(int argc, char ** argv) {
 				printf("tape-benchmark (" TAPEBENCHMARK_VERSION ")\n");
 				printf(gettext("  -d, --device=DEV           : use this device DEV instead of \"%s\"\n"), DEFAULT_DEVICE);
 				printf(gettext("  -h, --help                 : show this and quit\n"));
+				printf(gettext("  -i, --inquiry              : inquiry tape drive\n"));
 				tb_convert_size(buffer_size, 16, MAX_BUFFER_SIZE);
 				printf(gettext("  -M, --max-buffer-size=SIZE : maximum block size (instead of %s)\n"), buffer_size);
 				tb_convert_size(buffer_size, 16, MIN_BUFFER_SIZE);
@@ -147,6 +150,10 @@ int main(int argc, char ** argv) {
 				printf(gettext("Notice: this programme will allocate 32 buffers of max-buffer-size\n"));
 
 				return 0;
+
+			case OPT_INQUIRY:
+				inquiry_only = true;
+				break;
 
 			case OPT_MAX_BUFFER:
 				tmp_size = tb_parse_size(optarg);
@@ -261,6 +268,12 @@ int main(int argc, char ** argv) {
 		}
 
 		free(scsi_file);
+
+		if (inquiry_only)
+			return 0;
+	} else if (inquiry_only) {
+		printf(gettext("Failed to get generic scsi device\n"));
+		return 2;
 	}
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
