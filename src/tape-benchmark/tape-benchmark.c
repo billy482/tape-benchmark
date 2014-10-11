@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 11:16:26 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 13:49:15 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -37,9 +37,9 @@
 #include <locale.h>
 // poll
 #include <poll.h>
-// fflush, printf
+// fflush, getline, printf
 #include <stdio.h>
-// free, malloc
+// free, malloc, rpmatch
 #include <stdlib.h>
 // memset
 #include <string.h>
@@ -275,6 +275,22 @@ int main(int argc, char ** argv) {
 		printf(gettext("Failed to get generic scsi device\n"));
 		return 2;
 	}
+
+	do {
+		printf(gettext("Do you want to start benchmark ? "));
+		fflush(stdout);
+
+		char * line = NULL;
+		size_t line_length = 0;
+		ssize_t nb_read = getline(&line, &line_length, stdin);
+
+		if (nb_read < 0)
+			return 0;
+
+		failed = rpmatch(line);
+		if (failed == 0)
+			return 0;
+	} while (failed < 0);
 
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
