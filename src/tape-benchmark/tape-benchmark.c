@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 12 Oct 2014 11:20:06 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 11:40:29 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -116,6 +116,9 @@ int main(int argc, char ** argv) {
 		{ 0, 0, 0, 0 },
 	};
 
+	tb_print_time();
+	tb_print_flush("tape-benchmark: " TAPEBENCHMARK_VERSION "\n");
+
 	static int lo;
 	for (;;) {
 		int c = getopt_long(argc, argv, "d:him:M:s:S:rRV?", op, &lo);
@@ -207,7 +210,12 @@ int main(int argc, char ** argv) {
 					printf(gettext("Error: invalid target speed\n"));
 					return 1;
 				} else if (tmp_size > 0) {
+					tb_convert_size(buffer_size, 16, tmp_size);
+					printf(gettext("Target speed: %s\n"), buffer_size);
+
 					size = 120 * tmp_size;
+					tb_convert_size(buffer_size, 16, size);
+					printf(gettext("File size: %s\n"), buffer_size);
 				} else {
 					printf(gettext("Error: target speed should be positive\n"));
 					return 1;
@@ -227,9 +235,6 @@ int main(int argc, char ** argv) {
 				return 0;
 		}
 	}
-
-	tb_print_time();
-	tb_print_flush("tape-benchmark: " TAPEBENCHMARK_VERSION "\n");
 
 	tb_print_time();
 	tb_print_flush(gettext("Openning \"%s\"... "), device);
