@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 12 Oct 2014 11:40:29 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 11:53:09 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -211,10 +211,12 @@ int main(int argc, char ** argv) {
 					return 1;
 				} else if (tmp_size > 0) {
 					tb_convert_size(buffer_size, 16, tmp_size);
+					tb_print_time();
 					printf(gettext("Target speed: %s\n"), buffer_size);
 
 					size = 120 * tmp_size;
 					tb_convert_size(buffer_size, 16, size);
+					tb_print_time();
 					printf(gettext("File size: %s\n"), buffer_size);
 				} else {
 					printf(gettext("Error: target speed should be positive\n"));
