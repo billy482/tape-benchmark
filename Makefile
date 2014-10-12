@@ -87,7 +87,7 @@ locale/$$($(1)_LOCALE).pot: $$($(1)_SRC_FILES)
 
 $$($(1)_LOCALE_FILES_PO): locale/$$($(1)_LOCALE).pot
 	@echo " MSGMERGE  $$(@F)"
-	@msgmerge -q -U -i -w 128 $$@ $$<
+	@msgmerge -q -F -U -i -w 128 $$@ $$<
 	@touch $$@
 
 %.mo: %.po
