@@ -4,9 +4,9 @@
 # Automatically generated, 2014.
 #
 msgid   ""
-msgstr  "Project-Id-Version: v0.3.3-30-g3009518\n"
+msgstr  "Project-Id-Version: v0.3.3-33-g2e46fac\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2014-10-12 11:53+0200\n"
+        "POT-Creation-Date: 2014-10-12 22:24+0200\n"
         "PO-Revision-Date: 2014-10-06 22:43+0200\n"
         "Last-Translator: Automatically generated\n"
         "Language-Team: none\n"
@@ -16,355 +16,360 @@ msgstr  "Project-Id-Version: v0.3.3-30-g3009518\n"
         "Content-Transfer-Encoding: 8bit\n"
         "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: src/tape-benchmark/tape-benchmark.c:137
+#: src/tape-benchmark/tape-benchmark.c:138
 #, c-format
 msgid   "  -d, --device=DEV           : use this device DEV instead of \"%s\"\n"
 msgstr  "  -d, --device=DEV             : utilise ce périphérique DEV au lieu de \"%s\"\n"
 
-#: src/tape-benchmark/tape-benchmark.c:138
+#: src/tape-benchmark/tape-benchmark.c:139
 #, c-format
 msgid   "  -h, --help                 : show this and quit\n"
 msgstr  "  -h, --help                   : affiche ceci et quit\n"
 
-#: src/tape-benchmark/tape-benchmark.c:139
+#: src/tape-benchmark/tape-benchmark.c:140
 #, fuzzy, c-format
 msgid   "  -i, --inquiry              : inquiry tape drive\n"
 msgstr  "  -i, --inquiry                : questionne le lecteur\n"
 
-#: src/tape-benchmark/tape-benchmark.c:141
+#: src/tape-benchmark/tape-benchmark.c:142
 #, fuzzy, c-format
 msgid   "  -M, --max-buffer-size=SIZE : maximum block size (instead of %s)\n"
 msgstr  "  -M, --max-buffer-size=TAILLE : taille de bloque maximal (au lieu de %s)\n"
 
-#: src/tape-benchmark/tape-benchmark.c:143
+#: src/tape-benchmark/tape-benchmark.c:144
 #, fuzzy, c-format
 msgid   "  -m, --min-buffer-size=SIZE : minimum block size (instead of %s)\n"
 msgstr  "  -m, --min-buffer-size=TAILLE : taille de bloque minimal (au lieu de %s)\n"
 
-#: src/tape-benchmark/tape-benchmark.c:145
+#: src/tape-benchmark/tape-benchmark.c:146
 #, c-format
 msgid   "  -s, --size=SIZE            : size of file (default: %s)\n"
 msgstr  "  -s, --size=TAILLE            : taille du fichier (par défaut: %s)\n"
 
-#: src/tape-benchmark/tape-benchmark.c:146
+#: src/tape-benchmark/tape-benchmark.c:147
 #, fuzzy, c-format
 msgid   "  -S, --target-size=SIZE     : compute size of file based on target speed\n"
 msgstr  "  -S, --target-size=TAILLE     : calcul la taille du fichier en se basant sur la vitesse espérée\n"
 
-#: src/tape-benchmark/tape-benchmark.c:147
+#: src/tape-benchmark/tape-benchmark.c:148
 #, c-format
 msgid   "  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"
 msgstr  "  -r, --no-rewind              : ne rembobine pas entre chaque étape (par défault: rembobine entre chaque étape)\n"
 
-#: src/tape-benchmark/tape-benchmark.c:148
+#: src/tape-benchmark/tape-benchmark.c:149
 #, c-format
 msgid   "  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n"
         "\n"
 msgstr  "  -R, --rewind-at-start        : rembobine la bande avant d'écrire sur la bande, (par défaut: pas de rembobinage)\n"
         "\n"
 
-#: src/tape-benchmark/tape-benchmark.c:150
+#: src/tape-benchmark/tape-benchmark.c:151
 #, c-format
 msgid   "SIZE can be specified with (BKGT)\n"
 msgstr  "TAILLE peut être spécifier avec (BKGT)\n"
 
-#: src/tape-benchmark/tape-benchmark.c:151
+#: src/tape-benchmark/tape-benchmark.c:152
 #, c-format
 msgid   "  1B => 1 byte, 1K => 1024B, 1M => 1024K, 1G => 1024M, 1T => 1024G\n"
 msgstr  "  1B => 1 octet, 1K => 1024B, 1M => 1024K, 1G => 1024M, 1T => 1024G\n"
 
-#: src/tape-benchmark/tape-benchmark.c:152
+#: src/tape-benchmark/tape-benchmark.c:153
 #, c-format
 msgid   "Another way to set the size is by specifying an integer which will be interpreted as a power of two.\n"
 msgstr  "Une autre façon de définir la taille est de spécifier celle-ci par un entier qui sera interprété comme une puissance "
         "de deux.\n"
 
-#: src/tape-benchmark/tape-benchmark.c:153
+#: src/tape-benchmark/tape-benchmark.c:154
 #, c-format
 msgid   "  10 => 2^10 bytes (= 1K), 16 => 2^16 bytes (= 64K), 24 => 2^24 bytes (= 16M), and so on\n"
 msgstr  "  10 => 2^10 octets (= 1K), 16 => 2^16 octets (= 64K), 24 => 2^24 octets (= 16M), et ainsi de suite\n"
 
-#: src/tape-benchmark/tape-benchmark.c:154
+#: src/tape-benchmark/tape-benchmark.c:155
 #, c-format
 msgid   "Constraint: min-buffer-size and max-buffer-size should be a power of two\n"
         "\n"
 msgstr  "Contrainte: min-buffer-size et max-buffer-size doivent être des puissances de deux\n"
         "\n"
 
-#: src/tape-benchmark/tape-benchmark.c:156
+#: src/tape-benchmark/tape-benchmark.c:157
 #, fuzzy, c-format
 msgid   "Notice: this programme will allocate 32 buffers of max-buffer-size\n"
 msgstr  "À noter: ce programme allouera 32 tampons de max-buffer-size\n"
 
-#: src/tape-benchmark/tape-benchmark.c:167
+#: src/tape-benchmark/tape-benchmark.c:168
 #, fuzzy, c-format
 msgid   "Error: invalid block size for max-buffer-size\n"
 msgstr  "Erreur: taille de bloque invalide pour max-buffer-size\n"
 
-#: src/tape-benchmark/tape-benchmark.c:172
+#: src/tape-benchmark/tape-benchmark.c:173
 #, c-format
 msgid   "Error: max-buffer-size should be positive and a power of two\n"
 msgstr  "Erreur: max-buffer-size doit être un nombre positif et une puissance de deux\n"
 
-#: src/tape-benchmark/tape-benchmark.c:180
+#: src/tape-benchmark/tape-benchmark.c:181
 #, fuzzy, c-format
 msgid   "Error: invalid block size for min-buffer-size\n"
 msgstr  "Erreur: taille de bloque invalide pour min-buffer-size\n"
 
-#: src/tape-benchmark/tape-benchmark.c:185
+#: src/tape-benchmark/tape-benchmark.c:186
 #, c-format
 msgid   "Error: min-buffer-size should be positive and a power of two\n"
 msgstr  "Erreur: min-buffer-size doit être un nombre positif et une puissance de deux\n"
 
-#: src/tape-benchmark/tape-benchmark.c:197
+#: src/tape-benchmark/tape-benchmark.c:198
 #, fuzzy, c-format
 msgid   "Error: invalid file size\n"
 msgstr  "Erreur: taille de fichier invalide\n"
 
-#: src/tape-benchmark/tape-benchmark.c:202
+#: src/tape-benchmark/tape-benchmark.c:203
 #, c-format
 msgid   "Error: size should be positive\n"
 msgstr  "Erreur: la taille doit être un nombre positif\n"
 
-#: src/tape-benchmark/tape-benchmark.c:210
+#: src/tape-benchmark/tape-benchmark.c:211
 #, fuzzy, c-format
 msgid   "Error: invalid target speed\n"
 msgstr  "Erreur: vitesse espérée invalide\n"
 
-#: src/tape-benchmark/tape-benchmark.c:215
+#: src/tape-benchmark/tape-benchmark.c:216
 #, fuzzy, c-format
 msgid   "Target speed: %s\n"
 msgstr  "vitesse espéré: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:220
+#: src/tape-benchmark/tape-benchmark.c:221
 #, c-format
 msgid   "File size: %s\n"
 msgstr  "Taille du fichier: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:222
+#: src/tape-benchmark/tape-benchmark.c:223
 #, fuzzy, c-format
 msgid   "Error: target speed should be positive\n"
 msgstr  "Erreur: la taille doit être un nombre positif\n"
 
-#: src/tape-benchmark/tape-benchmark.c:232
+#: src/tape-benchmark/tape-benchmark.c:233
 #, c-format
 msgid   "tape-benchmark\n"
 msgstr  "tape-benchmark\n"
 
-#: src/tape-benchmark/tape-benchmark.c:233
+#: src/tape-benchmark/tape-benchmark.c:234
 #, c-format
 msgid   "  version: %s\n"
 msgstr  "  version: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:234
+#: src/tape-benchmark/tape-benchmark.c:235
 #, c-format
 msgid   "  build: %s\n"
 msgstr  "  build: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:235
+#: src/tape-benchmark/tape-benchmark.c:236
 #, c-format
 msgid   "  based on git commit: %s\n"
 msgstr  "  basé sur le commit git: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:236
+#: src/tape-benchmark/tape-benchmark.c:237
 #, c-format
 msgid   "  checksum of source code: %s\n"
 msgstr  "  empreinte du code source: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:242
+#: src/tape-benchmark/tape-benchmark.c:243
 #, c-format
 msgid   "Openning \"%s\"... "
 msgstr  "Ouverture \"%s\"... "
 
-#: src/tape-benchmark/tape-benchmark.c:245 src/tape-benchmark/tape-benchmark.c:267
+#: src/tape-benchmark/tape-benchmark.c:246 src/tape-benchmark/tape-benchmark.c:268
 #, c-format
 msgid   "failed!!!, because %m\n"
 msgstr  "échec!!!, parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:253
+#: src/tape-benchmark/tape-benchmark.c:254
 #, c-format
 msgid   "Oops: seem not to be a valid tape device\n"
 msgstr  "Oops: il semble que ce ne soit pas un lecteur de bande\n"
 
-#: src/tape-benchmark/tape-benchmark.c:259
+#: src/tape-benchmark/tape-benchmark.c:260
 #, fuzzy, c-format
 msgid   "Oops: Tape has its write lock enabled\n"
 msgstr  "Oops: Verrou d'écriture positionné sur la bande\n"
 
-#: src/tape-benchmark/tape-benchmark.c:270
+#: src/tape-benchmark/tape-benchmark.c:271
 #, c-format
 msgid   "fd: %d\n"
 msgstr  "fd: %d\n"
 
-#: src/tape-benchmark/tape-benchmark.c:280
+#: src/tape-benchmark/tape-benchmark.c:281
 #, fuzzy, c-format
 msgid   "Failed to open scsi device because %m\n"
 msgstr  "Échec de l'ouverture du lecteur parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:287
-#, fuzzy, c-format
-msgid   "Tape vendor: %s\n"
-msgstr  "Fabriquant du lecteur: %s\n"
-
-#: src/tape-benchmark/tape-benchmark.c:289
-#, c-format
-msgid   "Model: %s\n"
-msgstr  "Modèle: %s\n"
-
 #: src/tape-benchmark/tape-benchmark.c:291
 #, fuzzy, c-format
-msgid   "Revision: %s\n"
-msgstr  "Révision: %s\n"
+msgid   "Warning: WORM media loaded, do you want to continue ?"
+msgstr  "Attention: un média de type WORM est chargé, voulez-vous continuer ?"
 
-#: src/tape-benchmark/tape-benchmark.c:293
-#, c-format
-msgid   "Serial number: %s\n"
-msgstr  "Numéro de série: %s\n"
-
-#: src/tape-benchmark/tape-benchmark.c:301
-#, fuzzy, c-format
-msgid   "Failed to get generic scsi device\n"
-msgstr  "N'a pas réussi a optenir le périphérique scsi générique\n"
-
-#: src/tape-benchmark/tape-benchmark.c:307
-#, c-format
-msgid   "Do you want to start benchmark ? "
-msgstr  "Voulez-vous commencer le teste ? "
-
-#: src/tape-benchmark/tape-benchmark.c:315
+#: src/tape-benchmark/tape-benchmark.c:299 src/tape-benchmark/tape-benchmark.c:342
 #, c-format
 msgid   "\n"
         "Bye !!!\n"
 msgstr  "\n"
         "Salut !!!\n"
 
-#: src/tape-benchmark/tape-benchmark.c:321 src/tape-benchmark/tape-benchmark.c:524
+#: src/tape-benchmark/tape-benchmark.c:305 src/tape-benchmark/tape-benchmark.c:348 src/tape-benchmark/tape-benchmark.c:551
 #, fuzzy, c-format
 msgid   "Bye !!!\n"
 msgstr  "Salut !!!\n"
 
-#: src/tape-benchmark/tape-benchmark.c:329
+#: src/tape-benchmark/tape-benchmark.c:314
+#, fuzzy, c-format
+msgid   "Tape vendor: %s\n"
+msgstr  "Fabriquant du lecteur: %s\n"
+
+#: src/tape-benchmark/tape-benchmark.c:316
+#, c-format
+msgid   "Model: %s\n"
+msgstr  "Modèle: %s\n"
+
+#: src/tape-benchmark/tape-benchmark.c:318
+#, fuzzy, c-format
+msgid   "Revision: %s\n"
+msgstr  "Révision: %s\n"
+
+#: src/tape-benchmark/tape-benchmark.c:320
+#, c-format
+msgid   "Serial number: %s\n"
+msgstr  "Numéro de série: %s\n"
+
+#: src/tape-benchmark/tape-benchmark.c:328
+#, fuzzy, c-format
+msgid   "Failed to get generic scsi device\n"
+msgstr  "N'a pas réussi a optenir le périphérique scsi générique\n"
+
+#: src/tape-benchmark/tape-benchmark.c:334
+#, c-format
+msgid   "Do you want to start benchmark ? "
+msgstr  "Voulez-vous commencer le teste ? "
+
+#: src/tape-benchmark/tape-benchmark.c:356
 msgid   "Generate random data from \"/dev/urandom\"... "
 msgstr  "Génération de données aléatoires depuis \"/dev/urandom\"... "
 
-#: src/tape-benchmark/tape-benchmark.c:332
+#: src/tape-benchmark/tape-benchmark.c:359
 #, c-format
 msgid   "Failed to open because %m\n"
 msgstr  "Échec de l'ouverture parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:341
+#: src/tape-benchmark/tape-benchmark.c:368
 #, fuzzy, c-format
 msgid   "Error: failed to allocate memory (size: %zd) because %m\n"
 msgstr  "Erreur: échec de l'allocation de mémoire (taille: %zd) parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:349
+#: src/tape-benchmark/tape-benchmark.c:376
 #, c-format
 msgid   "\n"
         "Warning: failed to read from \"/dev/urandom\" because %m\n"
 msgstr  "\n"
         "Warning: failed to read from \"/dev/urandom\" because %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:351
+#: src/tape-benchmark/tape-benchmark.c:378
 #, c-format
 msgid   "\n"
         "Warning: read less than expected, %zd instead of %zd\n"
 msgstr  "\n"
         "Attention: a lu moins que prévu, %zd au lieu de %zd\n"
 
-#: src/tape-benchmark/tape-benchmark.c:354 src/tape-benchmark/tape-benchmark.c:504
+#: src/tape-benchmark/tape-benchmark.c:381 src/tape-benchmark/tape-benchmark.c:531
 #, c-format
 msgid   "done\n"
 msgstr  "fait\n"
 
-#: src/tape-benchmark/tape-benchmark.c:363
+#: src/tape-benchmark/tape-benchmark.c:390
 #, c-format
 msgid   "Warning: block size is defined to %zd instead of %zd\n"
 msgstr  "Attention: taille de bloque est définie à %zd au lieu de %zd\n"
 
-#: src/tape-benchmark/tape-benchmark.c:373
+#: src/tape-benchmark/tape-benchmark.c:400
 #, c-format
 msgid   "Device is no ready, so we wait until"
 msgstr  "Périphérique pas encore prêt, on attend qu'il le soit"
 
-#: src/tape-benchmark/tape-benchmark.c:392
+#: src/tape-benchmark/tape-benchmark.c:419
 #, c-format
 msgid   "Starting, nb loop: %zd, block size: %s\n"
 msgstr  "Démarrage, nb boucle: %zd, taille de bloque: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:410
+#: src/tape-benchmark/tape-benchmark.c:437
 #, c-format
 msgid   "It seems that you cannot use a block size greater than %s\n"
 msgstr  "Il semble que vous ne pouvez pas utiliser une taille de bloque supérieur à %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:414
+#: src/tape-benchmark/tape-benchmark.c:441
 #, fuzzy, c-format
 msgid   "Device is busy, so we wait a few seconds before restarting\n"
 msgstr  "Périphérique est occupé, on va attendre secondes avant de redémarrer\n"
 
-#: src/tape-benchmark/tape-benchmark.c:418
+#: src/tape-benchmark/tape-benchmark.c:445
 #, c-format
 msgid   "Restarting, nb loop: %zd, block size: %s\n"
 msgstr  "Redémarrage, nb boucle: %zd, taille de bloque: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:425
+#: src/tape-benchmark/tape-benchmark.c:452
 #, c-format
 msgid   "Oops: an error occured => (%d) %m\n"
 msgstr  "Oops: une erreur s'est produite => (%d) %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:426
+#: src/tape-benchmark/tape-benchmark.c:453
 #, c-format
 msgid   "fd: %d, buffer: %p, count: %zd\n"
 msgstr  "fd: %d, tampon: %p, total: %zd\n"
 
-#: src/tape-benchmark/tape-benchmark.c:443
+#: src/tape-benchmark/tape-benchmark.c:470
 #, c-format
 msgid   "loop: %lld, current speed %s, done: %.2f%%%n"
 msgstr  "boucle: %lld, vitesse actuelle %s, fait: %.2f%%%n"
 
-#: src/tape-benchmark/tape-benchmark.c:463
+#: src/tape-benchmark/tape-benchmark.c:490
 #, c-format
 msgid   "Finished, current speed %s\n"
 msgstr  "Fini, vitesse actuelle %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:468 src/tape-benchmark/tape-benchmark.c:488 src/tape-benchmark/tape-benchmark.c:510
+#: src/tape-benchmark/tape-benchmark.c:495 src/tape-benchmark/tape-benchmark.c:515 src/tape-benchmark/tape-benchmark.c:537
 #, c-format
 msgid   "MTIOCGET failed => %m\n"
 msgstr  "Échec MTIOCGET => %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:475
+#: src/tape-benchmark/tape-benchmark.c:502
 #, c-format
 msgid   "Weof failed => %m\n"
 msgstr  "Échec Weof => %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:482
+#: src/tape-benchmark/tape-benchmark.c:509
 #, c-format
 msgid   "Nop failed => %m\n"
 msgstr  "Échec Nop => %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:497
+#: src/tape-benchmark/tape-benchmark.c:524
 msgid   "Moving backward space 1 file... "
 msgstr  "Recule d'un fichier en arrière... "
 
-#: src/tape-benchmark/tape-benchmark.c:502
+#: src/tape-benchmark/tape-benchmark.c:529
 #, c-format
 msgid   "Failed => %m\n"
 msgstr  "Échec => %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:522
+#: src/tape-benchmark/tape-benchmark.c:549
 #, fuzzy, c-format
 msgid   "tape-benchmark exit now\n"
 msgstr  "tape-benchmark quitte maintenant\n"
 
-#: src/tape-benchmark/tape-benchmark.c:537
+#: src/tape-benchmark/tape-benchmark.c:564
 msgid   "Rewinding tape... "
 msgstr  "Rembobinage de la bande... "
 
-#: src/tape-benchmark/tape-benchmark.c:542
+#: src/tape-benchmark/tape-benchmark.c:569
 #, fuzzy, c-format
 msgid   "failed => %m\n"
 msgstr  "échec => %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:544
+#: src/tape-benchmark/tape-benchmark.c:571
 #, c-format
 msgid   ", done\n"
 msgstr  ", fait\n"

@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 12 Oct 2014 11:53:09 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 22:12:56 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -77,6 +77,7 @@ int main(int argc, char ** argv) {
 	static char buffer_size[16];
 	const char * device = DEFAULT_DEVICE;
 	bool inquiry_only = false;
+	static struct tb_scsi_mam mam;
 	ssize_t size = DEFAULT_SIZE;
 	bool no_rewind = false;
 	bool rewind = false;
@@ -281,6 +282,32 @@ int main(int argc, char ** argv) {
 		} else {
 			static struct tb_scsi_inquery info;
 			failed = tb_scsi_do_inquery(scsi_fd, &info);
+			if (failed == 0) {
+				tb_scsi_do_read_mam(scsi_fd, &mam);
+
+				if (mam.is_worm) {
+					do {
+						tb_print_time();
+						printf(gettext("Warning: WORM media loaded, do you want to continue ?"));
+						fflush(stdout);
+
+						char * line = NULL;
+						size_t line_length = 0;
+						ssize_t nb_read = getline(&line, &line_length, stdin);
+
+						if (nb_read < 0) {
+							printf(gettext("\nBye !!!\n"));
+							return 0;
+						}
+
+						failed = rpmatch(line);
+						if (failed == 0) {
+							printf(gettext("Bye !!!\n"));
+							return 0;
+						}
+					} while (failed < 0);
+				}
+			}
 			close(scsi_fd);
 
 			tb_print_time();
