@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 15:13:20 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 11:20:06 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -118,7 +118,7 @@ int main(int argc, char ** argv) {
 
 	static int lo;
 	for (;;) {
-		int c = getopt_long(argc, argv, "d:him:M:s:rRV?", op, &lo);
+		int c = getopt_long(argc, argv, "d:him:M:s:S:rRV?", op, &lo);
 
 		if (c == -1)
 			break;
