@@ -22,11 +22,14 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Fri, 10 Oct 2014 23:26:59 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 12:17:21 +0200                           *
 \***************************************************************************/
 
 #ifndef __TAPEBENCHMARK_SCSI_H__
 #define __TAPEBENCHMARK_SCSI_H__
+
+// bool
+#include <stdbool.h>
 
 struct tb_scsi_inquery {
 	char vendor[9];
@@ -35,7 +38,16 @@ struct tb_scsi_inquery {
 	char serial_number[13];
 };
 
+struct tb_scsi_mam {
+	char vendor[9];
+	char serial_number[33];
+	char manufactured_date[9];
+	bool is_worm;
+	unsigned long long int load_count;
+};
+
 int tb_scsi_do_inquery(int fd, struct tb_scsi_inquery * data);
+int tb_scsi_do_read_mam(int fd, struct tb_scsi_mam * mam);
 char * tb_scsi_lookup_scsi_file(const char * file);
 
 #endif

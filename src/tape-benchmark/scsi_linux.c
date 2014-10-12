@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 00:03:56 +0200                           *
+*  Last modified: Sun, 12 Oct 2014 12:59:54 +0200                           *
 \***************************************************************************/
 
 #define _GNU_SOURCE
@@ -40,7 +40,7 @@
 #include <stdio.h>
 // free
 #include <stdlib.h>
-// strrchr
+// memset, strncpy, strrchr
 #include <string.h>
 // bzero
 #include <strings.h>
@@ -79,6 +79,41 @@ struct scsi_log_sense_request {
 	unsigned short allocation_length; // must be a bigger endian integer
 	unsigned char control;
 } __attribute__((packed));
+
+enum scsi_mam_attribute {
+	scsi_mam_remaining_capacity  = 0x0000,
+	scsi_mam_maximum_capacity    = 0x0001,
+	scsi_mam_load_count          = 0x0003,
+	scsi_mam_mam_space_remaining = 0x0004,
+
+	scsi_mam_device_at_last_load           = 0x020A,
+	scsi_mam_device_at_last_load_2         = 0x020B,
+	scsi_mam_device_at_last_load_3         = 0x020C,
+	scsi_mam_device_at_last_load_4         = 0x020D,
+	scsi_mam_total_written_in_medium_life  = 0x0220,
+	scsi_mam_total_read_in_medium_life     = 0x0221,
+	scsi_mam_total_written_in_current_load = 0x0222,
+	scsi_mam_total_read_current_load       = 0x0223,
+
+	scsi_mam_medium_manufacturer      = 0x0400,
+	scsi_mam_medium_serial_number     = 0x0401,
+	scsi_mam_medium_manufacturer_date = 0x0406,
+	scsi_mam_mam_capacity             = 0x0407,
+	scsi_mam_medium_type              = 0x0408,
+	scsi_mam_medium_type_information  = 0x0409,
+
+	scsi_mam_application_vendor           = 0x0800,
+	scsi_mam_application_name             = 0x0801,
+	scsi_mam_application_version          = 0x0802,
+	scsi_mam_user_medium_text_label       = 0x0803,
+	scsi_mam_date_and_time_last_written   = 0x0804,
+	scsi_mam_text_localization_identifier = 0x0805,
+	scsi_mam_barcode                      = 0x0806,
+	scsi_mam_owning_host_textual_name     = 0x0807,
+	scsi_mam_media_pool                   = 0x0808,
+
+	scsi_mam_unique_cardtrige_identity = 0x1000,
+};
 
 struct scsi_request_sense {
 	unsigned char error_code:7;						/* Byte 0 Bits 0-6 */
@@ -220,6 +255,115 @@ int tb_scsi_do_inquery(int fd, struct tb_scsi_inquery * data) {
 	strncpy(data->serial_number, result_serial_number.unit_serial_number, 12);
 	data->serial_number[12] = '\0';
 	tb_string_rtim(data->serial_number, ' ');
+
+	return 0;
+}
+
+int tb_scsi_do_read_mam(int fd, struct tb_scsi_mam * mam) {
+	struct {
+		unsigned char operation_code;
+		enum {
+			scsi_read_attribute_service_action_attributes_values = 0x00,
+			scsi_read_attribute_service_action_attribute_list = 0x01,
+			scsi_read_attribute_service_action_volume_list = 0x02,
+			scsi_read_attribute_service_action_parition_list = 0x03,
+		} service_action:5;
+		unsigned char obsolete:3;
+		unsigned char reserved0[3];
+		unsigned char volume_number;
+		unsigned char reserved1;
+		unsigned char partition_number;
+		unsigned short first_attribute_id;
+		unsigned short allocation_length;
+		unsigned char reserved2;
+		unsigned char control;
+	} __attribute__((packed)) command = {
+		.operation_code = 0x8C, // READ ATTRIBUTE
+		.service_action = scsi_read_attribute_service_action_attributes_values,
+		.volume_number = 0,
+		.partition_number = 0,
+		.first_attribute_id = 0,
+		.allocation_length = htobe16(1024),
+		.control = 0,
+	};
+
+	struct scsi_request_sense sense;
+	unsigned char buffer[1024];
+
+	sg_io_hdr_t header;
+	memset(&header, 0, sizeof(header));
+	memset(&sense, 0, sizeof(sense));
+	memset(buffer, 0, 1024);
+
+	header.interface_id = 'S';
+	header.cmd_len = sizeof(command);
+	header.mx_sb_len = sizeof(sense);
+	header.dxfer_len = sizeof(buffer);
+	header.cmdp = (unsigned char *) &command;
+	header.sbp = (unsigned char *) &sense;
+	header.dxferp = buffer;
+	header.timeout = 60000; // 1 minute
+	header.dxfer_direction = SG_DXFER_FROM_DEV;
+
+	int status = ioctl(fd, SG_IO, &header);
+	if (status)
+		return status;
+
+	struct scsi_mam {
+		enum scsi_mam_attribute attribute_identifier:16;
+		unsigned char format:2;
+		unsigned char reserved:5;
+		bool read_only:1;
+		unsigned short attribute_length;
+		union {
+			unsigned char int8;
+			unsigned short be16;
+			unsigned long long be64;
+			char text[160];
+		} attribute_value;
+	} __attribute__((packed));
+
+	unsigned int data_available = be32toh(*(unsigned int *) buffer);
+	unsigned char * ptr = buffer + 4;
+
+	for (ptr = buffer + 4; ptr < buffer + data_available;) {
+		struct scsi_mam * attr = (struct scsi_mam *) ptr;
+		attr->attribute_identifier = be16toh(attr->attribute_identifier);
+		attr->attribute_length = be16toh(attr->attribute_length);
+
+		ptr += attr->attribute_length + 5;
+
+		if (attr->attribute_length == 0)
+			continue;
+
+		switch (attr->attribute_identifier) {
+			case scsi_mam_load_count:
+				mam->load_count = be64toh(attr->attribute_value.be64);
+				break;
+
+			case scsi_mam_medium_manufacturer:
+				strncpy(mam->vendor, attr->attribute_value.text, 8);
+				mam->vendor[8] = '\0';
+				tb_string_rtim(mam->vendor, ' ');
+				break;
+
+			case scsi_mam_medium_serial_number:
+				strncpy(mam->serial_number, attr->attribute_value.text, 32);
+				mam->serial_number[32] = '\0';
+				tb_string_rtim(mam->serial_number, ' ');
+				break;
+
+			case scsi_mam_medium_manufacturer_date:
+				strncpy(mam->manufactured_date, attr->attribute_value.text, 8);
+				mam->manufactured_date[8] = '\0';
+				tb_string_rtim(mam->manufactured_date, ' ');
+				break;
+
+			case scsi_mam_medium_type:
+				mam->is_worm = attr->attribute_value.int8 == 0x80;
+				break;
+		}
+	}
 
 	return 0;
 }
