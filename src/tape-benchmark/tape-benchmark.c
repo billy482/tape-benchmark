@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sat, 11 Oct 2014 14:21:29 +0200                           *
+*  Last modified: Sat, 11 Oct 2014 15:13:20 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -90,15 +90,16 @@ int main(int argc, char ** argv) {
 	ssize_t tmp_size = 0;
 
 	enum {
-		OPT_DEVICE     = 'd',
-		OPT_HELP       = 'h',
-		OPT_INQUIRY    = 'i',
-		OPT_MAX_BUFFER = 'M',
-		OPT_MIN_BUFFER = 'm',
-		OPT_NO_REWIND  = 'r',
-		OPT_REWIND     = 'R',
-		OPT_SIZE       = 's',
-		OPT_VERSION    = 'V',
+		OPT_DEVICE      = 'd',
+		OPT_HELP        = 'h',
+		OPT_INQUIRY     = 'i',
+		OPT_MAX_BUFFER  = 'M',
+		OPT_MIN_BUFFER  = 'm',
+		OPT_NO_REWIND   = 'r',
+		OPT_REWIND      = 'R',
+		OPT_SIZE        = 's',
+		OPT_TARGET_SIZE = 'S',
+		OPT_VERSION     = 'V',
 	};
 
 	static struct option op[] = {
@@ -108,6 +109,7 @@ int main(int argc, char ** argv) {
 		{ "min-buffer-size", 1, 0, OPT_MIN_BUFFER },
 		{ "no-rewind",       0, 0, OPT_NO_REWIND },
 		{ "size",            1, 0, OPT_SIZE },
+		{ "target-size",     1, 0, OPT_TARGET_SIZE },
 		{ "rewind-at-start", 0, 0, OPT_REWIND },
 		{ "version",         0, 0, OPT_VERSION },
 
@@ -138,6 +140,7 @@ int main(int argc, char ** argv) {
 				printf(gettext("  -m, --min-buffer-size=SIZE : minimum block size (instead of %s)\n"), buffer_size);
 				tb_convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf(gettext("  -s, --size=SIZE            : size of file (default: %s)\n"), buffer_size);
+				printf(gettext("  -S, --target-size=SIZE     : compute size of file based on target speed\n"));
 				printf(gettext("  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"));
 				printf(gettext("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n"));
 
@@ -194,6 +197,19 @@ int main(int argc, char ** argv) {
 					size = tmp_size;
 				} else {
 					printf(gettext("Error: size should be positive\n"));
+					return 1;
+				}
+				break;
+
+			case OPT_TARGET_SIZE:
+				tmp_size = tb_parse_size(optarg);
+				if (tmp_size == -1) {
+					printf(gettext("Error: invalid target speed\n"));
+					return 1;
+				} else if (tmp_size > 0) {
+					size = 120 * tmp_size;
+				} else {
+					printf(gettext("Error: target speed should be positive\n"));
 					return 1;
 				}
 				break;
