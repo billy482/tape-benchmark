@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 14 Oct 2014 00:29:52 +0200                           *
+*  Last modified: Tue, 14 Oct 2014 00:46:21 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -347,7 +347,8 @@ int main(int argc, char ** argv) {
 			}
 		}
 
-		close(scsi_fd);
+		if (scsi_fd > -1)
+			close(scsi_fd);
 		free(scsi_file);
 
 		if (inquiry_only || read_mam)
