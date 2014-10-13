@@ -14,7 +14,7 @@ _tapebenchmark() {
 		-h | --help)
 			return 0
 			;;
-		-m | -M | -s | --max-buffer-size | --min-buffer-size | --size)
+		-m | -M | -s | -S | --max-buffer-size | --min-buffer-size | --size | --target-size)
 			if [[ -z "$cur" ]]; then
 				COMPREPLY=( $(compgen -W '1 2 3 4 5 6 7 8 9' -- "$cur" ) )
 			elif [[ "$cur" =~ [BKMGT] ]]; then
@@ -32,9 +32,9 @@ _tapebenchmark() {
 			;;
 	esac;
 
-	COMPREPLY=( $( compgen -W "-d -h -m -M -s -r -R \
-				--device --help --max-buffer-size --min-buffer-size --size \
-				--no-rewind --rewind-at-start" -- "$cur" ) )
+	COMPREPLY=( $( compgen -W "-d -h -i -m -M -s -S -r -R \
+				--device --help --inquiry --max-buffer-size --min-buffer-size --size \
+				--target-size --read-mam --no-rewind --rewind-at-start" -- "$cur" ) )
 
 	return 0;
 }
