@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 14 Oct 2014 00:25:49 +0200                           *
+*  Last modified: Tue, 14 Oct 2014 00:29:52 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -254,6 +254,8 @@ int main(int argc, char ** argv) {
 	if (fd_tape < 0) {
 		printf(gettext("failed!!!, because %m\n"));
 		return 2;
+	} else {
+		printf(gettext("fd: %d\n"), fd_tape);
 	}
 
 	struct mtget mt;
@@ -367,8 +369,6 @@ int main(int argc, char ** argv) {
 	if (fd_tape < 0) {
 		printf(gettext("failed!!!, because %m\n"));
 		return 2;
-	} else {
-		printf(gettext("fd: %d\n"), fd_tape);
 	}
 
 	if (rewind && !rewind_tape(fd_tape))
