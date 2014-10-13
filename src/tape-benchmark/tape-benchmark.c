@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Mon, 13 Oct 2014 21:20:51 +0200                           *
+*  Last modified: Tue, 14 Oct 2014 00:25:49 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -264,37 +264,63 @@ int main(int argc, char ** argv) {
 		return 2;
 	}
 
-	if (GMT_WR_PROT(mt.mt_gstat)) {
-		close(fd_tape);
-		printf(gettext("Oops: Tape has its write lock enabled\n"));
-		return 2;
-	}
-
-	failed = close(fd_tape);
-
-	fd_tape = open(device, O_WRONLY);
-	if (fd_tape < 0) {
-		printf(gettext("failed!!!, because %m\n"));
-		return 2;
-	} else {
-		printf(gettext("fd: %d\n"), fd_tape);
-	}
-
-	if (rewind && !rewind_tape(fd_tape))
-		return 2;
-
 	char * scsi_file = tb_scsi_lookup_scsi_file(device);
 	if (scsi_file != NULL) {
-		int scsi_fd = open(scsi_file, O_RDONLY);
+		int scsi_fd = open(scsi_file, O_RDWR);
 		if (scsi_fd < 0) {
 			printf(gettext("Failed to open scsi device because %m\n"));
 		} else {
 			static struct tb_scsi_inquery info;
-			failed = tb_scsi_do_inquery(scsi_fd, &info);
-			if (failed == 0) {
-				tb_scsi_do_read_mam(scsi_fd, &mam);
 
-				if (mam.is_worm) {
+			tb_print_time();
+			tb_print_flush(gettext("Inquiring tape drive… "));
+
+			failed = tb_scsi_do_inquery(scsi_fd, &info);
+
+			if (failed == 0)
+				printf(gettext("ok\n"));
+			else {
+				printf(gettext("failed because %m\n"));
+				return 2;
+			}
+
+			tb_print_time();
+			printf(gettext("Tape vendor: %s\n"), info.vendor);
+			tb_print_time();
+			printf(gettext("Model: %s\n"), info.model);
+			tb_print_time();
+			printf(gettext("Revision: %s\n"), info.revision);
+			tb_print_time();
+			printf(gettext("Serial number: %s\n"), info.serial_number);
+
+
+			tb_print_time();
+			tb_print_flush(gettext("Reading medium auxiliary memory… "));
+
+			failed = tb_scsi_do_read_mam(scsi_fd, &mam);
+
+			if (failed == 0) {
+				printf(gettext("ok\n"));
+
+				tb_print_time();
+				printf(gettext("Vendor: %s\n"), mam.vendor);
+				tb_print_time();
+				printf(gettext("Serial number: %s\n"), mam.serial_number);
+				tb_print_time();
+				printf(gettext("Manufactured date: %s\n"), mam.manufactured_date);
+				tb_print_time();
+				printf(gettext("Load count: %llu\n"), mam.load_count);
+
+				if (read_mam)
+					return 0;
+			} else {
+				printf(gettext("failed because %m\n"));
+				if (read_mam)
+					return 2;
+			}
+
+			if (failed == 0) {
+				if (mam.is_worm && !read_mam) {
 					do {
 						tb_print_time();
 						printf(gettext("Warning: WORM media loaded, do you want to continue ?"));
@@ -317,33 +343,6 @@ int main(int argc, char ** argv) {
 					} while (failed < 0);
 				}
 			}
-
-			tb_print_time();
-			printf(gettext("Tape vendor: %s\n"), info.vendor);
-			tb_print_time();
-			printf(gettext("Model: %s\n"), info.model);
-			tb_print_time();
-			printf(gettext("Revision: %s\n"), info.revision);
-			tb_print_time();
-			printf(gettext("Serial number: %s\n"), info.serial_number);
-		}
-
-		if (read_mam) {
-			failed = tb_scsi_do_read_mam(scsi_fd, &mam);
-
-			tb_print_time();
-			printf(gettext("Reading medium auxiliary memory: %s\n"), failed == 0 ? gettext("ok") : gettext("failed"));
-
-			if (failed == 0) {
-				tb_print_time();
-				printf(gettext("Vendor: %s\n"), mam.vendor);
-				tb_print_time();
-				printf(gettext("Serial number: %s\n"), mam.serial_number);
-				tb_print_time();
-				printf(gettext("Manufactured date: %s\n"), mam.manufactured_date);
-				tb_print_time();
-				printf(gettext("Load count: %llu\n"), mam.load_count);
-			}
 		}
 
 		close(scsi_fd);
@@ -355,6 +354,25 @@ int main(int argc, char ** argv) {
 		printf(gettext("Failed to get generic scsi device\n"));
 		return 2;
 	}
+
+	if (GMT_WR_PROT(mt.mt_gstat)) {
+		close(fd_tape);
+		printf(gettext("Oops: Tape has its write lock enabled\n"));
+		return 2;
+	}
+
+	failed = close(fd_tape);
+
+	fd_tape = open(device, O_WRONLY);
+	if (fd_tape < 0) {
+		printf(gettext("failed!!!, because %m\n"));
+		return 2;
+	} else {
+		printf(gettext("fd: %d\n"), fd_tape);
+	}
+
+	if (rewind && !rewind_tape(fd_tape))
+		return 2;
 
 	do {
 		tb_print_time();
