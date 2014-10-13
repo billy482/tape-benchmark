@@ -83,7 +83,7 @@ ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE}: $${$(1)_SRC_FILES} $${$(1)_HEAD_FILES}
 
 locale/$$($(1)_LOCALE).pot: $$($(1)_SRC_FILES)
 	@echo " XGETTEXT  $${$(1)_LOCALE}.pot"
-	@xgettext -d $$($(1)_LOCALE) -o $$@ -i -w 128 -s $$($(1)_SRC_FILES)
+	@xgettext -d $$($(1)_LOCALE) -o $$@ --from-code=UTF-8 -i -w 128 -s $$($(1)_SRC_FILES)
 
 $$($(1)_LOCALE_FILES_PO): locale/$$($(1)_LOCALE).pot
 	@echo " MSGMERGE  $$(@F)"
