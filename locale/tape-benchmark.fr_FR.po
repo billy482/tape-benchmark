@@ -6,7 +6,7 @@
 msgid   ""
 msgstr  "Project-Id-Version: v0.3.3-37-g20a62ec\n"
         "Report-Msgid-Bugs-To: \n"
-        "POT-Creation-Date: 2014-10-14 00:16+0200\n"
+        "POT-Creation-Date: 2014-10-14 00:29+0200\n"
         "PO-Revision-Date: 2014-10-06 22:43+0200\n"
         "Last-Translator: Automatically generated\n"
         "Language-Team: none\n"
@@ -181,107 +181,107 @@ msgstr  "  empreinte du code source: %s\n"
 msgid   "Openning \"%s\"… "
 msgstr  "Ouverture \"%s\"… "
 
-#: src/tape-benchmark/tape-benchmark.c:255 src/tape-benchmark/tape-benchmark.c:368
+#: src/tape-benchmark/tape-benchmark.c:255 src/tape-benchmark/tape-benchmark.c:370
 #, c-format
 msgid   "failed!!!, because %m\n"
 msgstr  "échec!!!, parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:263
+#: src/tape-benchmark/tape-benchmark.c:258
+#, c-format
+msgid   "fd: %d\n"
+msgstr  "fd : %d\n"
+
+#: src/tape-benchmark/tape-benchmark.c:265
 #, c-format
 msgid   "Oops: seem not to be a valid tape device\n"
 msgstr  "Oops: il semble que ce ne soit pas un lecteur de bande\n"
 
-#: src/tape-benchmark/tape-benchmark.c:271
+#: src/tape-benchmark/tape-benchmark.c:273
 #, fuzzy, c-format
 msgid   "Failed to open scsi device because %m\n"
 msgstr  "Échec de l'ouverture du lecteur parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:276
+#: src/tape-benchmark/tape-benchmark.c:278
 #, fuzzy
 msgid   "Inquiring tape drive… "
 msgstr  "Intérogation du lecteur de bande… "
 
-#: src/tape-benchmark/tape-benchmark.c:281 src/tape-benchmark/tape-benchmark.c:303
+#: src/tape-benchmark/tape-benchmark.c:283 src/tape-benchmark/tape-benchmark.c:305
 #, fuzzy, c-format
 msgid   "ok\n"
 msgstr  "ok\n"
 
-#: src/tape-benchmark/tape-benchmark.c:283 src/tape-benchmark/tape-benchmark.c:317
+#: src/tape-benchmark/tape-benchmark.c:285 src/tape-benchmark/tape-benchmark.c:319
 #, fuzzy, c-format
 msgid   "failed because %m\n"
 msgstr  "échec!!!, parce que %m\n"
 
-#: src/tape-benchmark/tape-benchmark.c:288
+#: src/tape-benchmark/tape-benchmark.c:290
 #, fuzzy, c-format
 msgid   "Tape vendor: %s\n"
 msgstr  "Fabriquant du lecteur: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:290
+#: src/tape-benchmark/tape-benchmark.c:292
 #, c-format
 msgid   "Model: %s\n"
 msgstr  "Modèle: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:292
+#: src/tape-benchmark/tape-benchmark.c:294
 #, fuzzy, c-format
 msgid   "Revision: %s\n"
 msgstr  "Révision: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:294 src/tape-benchmark/tape-benchmark.c:308
+#: src/tape-benchmark/tape-benchmark.c:296 src/tape-benchmark/tape-benchmark.c:310
 #, c-format
 msgid   "Serial number: %s\n"
 msgstr  "Numéro de série: %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:298
+#: src/tape-benchmark/tape-benchmark.c:300
 #, fuzzy
 msgid   "Reading medium auxiliary memory… "
 msgstr  "Lecture de la mémoire auxiliaire de la bande… "
 
-#: src/tape-benchmark/tape-benchmark.c:306
+#: src/tape-benchmark/tape-benchmark.c:308
 #, fuzzy, c-format
 msgid   "Vendor: %s\n"
 msgstr  "Fabriquant : %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:310
+#: src/tape-benchmark/tape-benchmark.c:312
 #, c-format
 msgid   "Manufactured date: %s\n"
 msgstr  "Date de fabrication : %s\n"
 
-#: src/tape-benchmark/tape-benchmark.c:312
+#: src/tape-benchmark/tape-benchmark.c:314
 #, c-format
 msgid   "Load count: %llu\n"
 msgstr  "Nombre de chargement : %llu\n"
 
-#: src/tape-benchmark/tape-benchmark.c:326
+#: src/tape-benchmark/tape-benchmark.c:328
 #, fuzzy, c-format
 msgid   "Warning: WORM media loaded, do you want to continue ?"
 msgstr  "Attention : un média de type WORM est chargé, voulez-vous continuer ?"
 
-#: src/tape-benchmark/tape-benchmark.c:334 src/tape-benchmark/tape-benchmark.c:387
+#: src/tape-benchmark/tape-benchmark.c:336 src/tape-benchmark/tape-benchmark.c:387
 #, c-format
 msgid   "\n"
         "Bye !!!\n"
 msgstr  "\n"
         "Salut !!!\n"
 
-#: src/tape-benchmark/tape-benchmark.c:340 src/tape-benchmark/tape-benchmark.c:393 src/tape-benchmark/tape-benchmark.c:596
+#: src/tape-benchmark/tape-benchmark.c:342 src/tape-benchmark/tape-benchmark.c:393 src/tape-benchmark/tape-benchmark.c:596
 #, fuzzy, c-format
 msgid   "Bye !!!\n"
 msgstr  "Salut !!!\n"
 
-#: src/tape-benchmark/tape-benchmark.c:354
+#: src/tape-benchmark/tape-benchmark.c:356
 #, fuzzy, c-format
 msgid   "Failed to get generic scsi device\n"
 msgstr  "N'a pas réussi a optenir le périphérique scsi générique\n"
 
-#: src/tape-benchmark/tape-benchmark.c:360
+#: src/tape-benchmark/tape-benchmark.c:362
 #, fuzzy, c-format
 msgid   "Oops: Tape has its write lock enabled\n"
 msgstr  "Oops : Verrou d'écriture positionné sur la bande\n"
-
-#: src/tape-benchmark/tape-benchmark.c:371
-#, c-format
-msgid   "fd: %d\n"
-msgstr  "fd : %d\n"
 
 #: src/tape-benchmark/tape-benchmark.c:379
 #, c-format
@@ -445,4 +445,3 @@ msgstr  "%.*f TOctets"
 #: src/tape-benchmark/util.c:183
 msgid   "[ %T ] "
 msgstr  "[ %T ] "
-
