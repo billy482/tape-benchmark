@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Sun, 12 Oct 2014 22:12:56 +0200                           *
+*  Last modified: Mon, 13 Oct 2014 21:20:51 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -80,6 +80,7 @@ int main(int argc, char ** argv) {
 	static struct tb_scsi_mam mam;
 	ssize_t size = DEFAULT_SIZE;
 	bool no_rewind = false;
+	bool read_mam = false;
 	bool rewind = false;
 
 	setlocale(LC_ALL, "");
@@ -101,6 +102,8 @@ int main(int argc, char ** argv) {
 		OPT_SIZE        = 's',
 		OPT_TARGET_SIZE = 'S',
 		OPT_VERSION     = 'V',
+
+		OPT_READ_MAM = 128,
 	};
 
 	static struct option op[] = {
@@ -109,6 +112,7 @@ int main(int argc, char ** argv) {
 		{ "max-buffer-size", 1, 0, OPT_MAX_BUFFER },
 		{ "min-buffer-size", 1, 0, OPT_MIN_BUFFER },
 		{ "no-rewind",       0, 0, OPT_NO_REWIND },
+		{ "read-mam",        0, 0, OPT_READ_MAM },
 		{ "size",            1, 0, OPT_SIZE },
 		{ "target-size",     1, 0, OPT_TARGET_SIZE },
 		{ "rewind-at-start", 0, 0, OPT_REWIND },
@@ -116,9 +120,6 @@ int main(int argc, char ** argv) {
 
 		{ 0, 0, 0, 0 },
 	};
-
-	tb_print_time();
-	tb_print_flush("tape-benchmark: " TAPEBENCHMARK_VERSION "\n");
 
 	static int lo;
 	for (;;) {
@@ -145,6 +146,7 @@ int main(int argc, char ** argv) {
 				tb_convert_size(buffer_size, 16, DEFAULT_SIZE);
 				printf(gettext("  -s, --size=SIZE            : size of file (default: %s)\n"), buffer_size);
 				printf(gettext("  -S, --target-size=SIZE     : compute size of file based on target speed\n"));
+				printf(gettext("      --read-mam             : read medium auxiliary memory then exit\n"));
 				printf(gettext("  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"));
 				printf(gettext("  -R, --rewind-at-start      : rewind tape before writing on tape, (default: no rewind at start)\n\n"));
 
@@ -192,6 +194,14 @@ int main(int argc, char ** argv) {
 				no_rewind = true;
 				break;
 
+			case OPT_READ_MAM:
+				read_mam = true;
+				break;
+
+			case OPT_REWIND:
+				rewind = true;
+				break;
+
 			case OPT_SIZE:
 				tmp_size = tb_parse_size(optarg);
 				if (tmp_size == -1) {
@@ -225,10 +235,6 @@ int main(int argc, char ** argv) {
 				}
 				break;
 
-			case OPT_REWIND:
-				rewind = true;
-				break;
-
 			case OPT_VERSION:
 				printf(gettext("tape-benchmark\n"));
 				printf(gettext("  version: %s\n"), TAPEBENCHMARK_VERSION);
@@ -240,7 +246,10 @@ int main(int argc, char ** argv) {
 	}
 
 	tb_print_time();
-	tb_print_flush(gettext("Openning \"%s\"... "), device);
+	tb_print_flush("tape-benchmark: " TAPEBENCHMARK_VERSION "\n");
+
+	tb_print_time();
+	tb_print_flush(gettext("Openning \"%s\"… "), device);
 	int fd_tape = open(device, O_RDONLY);
 	if (fd_tape < 0) {
 		printf(gettext("failed!!!, because %m\n"));
@@ -308,7 +317,6 @@ int main(int argc, char ** argv) {
 					} while (failed < 0);
 				}
 			}
-			close(scsi_fd);
 
 			tb_print_time();
 			printf(gettext("Tape vendor: %s\n"), info.vendor);
@@ -320,11 +328,30 @@ int main(int argc, char ** argv) {
 			printf(gettext("Serial number: %s\n"), info.serial_number);
 		}
 
+		if (read_mam) {
+			failed = tb_scsi_do_read_mam(scsi_fd, &mam);
+
+			tb_print_time();
+			printf(gettext("Reading medium auxiliary memory: %s\n"), failed == 0 ? gettext("ok") : gettext("failed"));
+
+			if (failed == 0) {
+				tb_print_time();
+				printf(gettext("Vendor: %s\n"), mam.vendor);
+				tb_print_time();
+				printf(gettext("Serial number: %s\n"), mam.serial_number);
+				tb_print_time();
+				printf(gettext("Manufactured date: %s\n"), mam.manufactured_date);
+				tb_print_time();
+				printf(gettext("Load count: %llu\n"), mam.load_count);
+			}
+		}
+
+		close(scsi_fd);
 		free(scsi_file);
 
-		if (inquiry_only)
+		if (inquiry_only || read_mam)
 			return 0;
-	} else if (inquiry_only) {
+	} else if (inquiry_only || read_mam) {
 		printf(gettext("Failed to get generic scsi device\n"));
 		return 2;
 	}
@@ -353,7 +380,7 @@ int main(int argc, char ** argv) {
 	ssize_t current_block_size = (mt.mt_dsreg & MT_ST_BLKSIZE_MASK) >> MT_ST_BLKSIZE_SHIFT;
 
 	tb_print_time();
-	tb_print_flush(gettext("Generate random data from \"/dev/urandom\"... "));
+	tb_print_flush(gettext("Generate random data from \"/dev/urandom\"… "));
 	int fd_ran = open("/dev/urandom", O_RDONLY);
 	if (fd_ran < 0) {
 		printf(gettext("Failed to open because %m\n"));
@@ -521,7 +548,7 @@ int main(int argc, char ** argv) {
 				rewind_tape(fd_tape);
 			} else {
 				tb_print_time();
-				tb_print_flush(gettext("Moving backward space 1 file... "));
+				tb_print_flush(gettext("Moving backward space 1 file… "));
 
 				static struct mtop rewind = { MTBSFM, 2 };
 				failed = ioctl(fd_tape, MTIOCTOP, &rewind);
@@ -561,7 +588,7 @@ int main(int argc, char ** argv) {
 static bool rewind_tape(int fd) {
 	static struct mtop rewind = { MTREW, 1 };
 
-	tb_print_flush(gettext("Rewinding tape... "));
+	tb_print_flush(gettext("Rewinding tape… "));
 
 	int failed = ioctl(fd, MTIOCTOP, &rewind);
 
