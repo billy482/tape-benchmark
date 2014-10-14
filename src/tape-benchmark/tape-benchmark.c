@@ -22,7 +22,7 @@
 *                                                                           *
 *  -----------------------------------------------------------------------  *
 *  Copyright (C) 2014, Clercin guillaume <gclercin@intellique.com>          *
-*  Last modified: Tue, 14 Oct 2014 00:46:21 +0200                           *
+*  Last modified: Wed, 15 Oct 2014 00:42:45 +0200                           *
 \***************************************************************************/
 
 // errno
@@ -109,6 +109,7 @@ int main(int argc, char ** argv) {
 	static struct option op[] = {
 		{ "device",          1, 0, OPT_DEVICE },
 		{ "help",            0, 0, OPT_HELP },
+		{ "inquiry",         0, 0, OPT_INQUIRY },
 		{ "max-buffer-size", 1, 0, OPT_MAX_BUFFER },
 		{ "min-buffer-size", 1, 0, OPT_MIN_BUFFER },
 		{ "no-rewind",       0, 0, OPT_NO_REWIND },
