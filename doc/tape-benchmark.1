@@ -1,4 +1,4 @@
-.TH tape-benchmark 1 "October 1, 2014" "" "Tape Benchmark"
+.TH tape-benchmark 1 "October 15th, 2014" "" "Tape Benchmark"
 
 .SH NAME
 tape-benchmark \- Find best block to use with tape drive
@@ -33,6 +33,12 @@ First block size used by the test. \fBSIZE\fP should be a power of two.
 .TP
 \fB\-s\fP, \fB\-\-size\fP=\fBSIZE\fP
 \fBSIZE\fP of file write by the test.
+.TP
+\fB\-S\fP, \fB\-\-target-size\fP=\fBSIZE\fP
+compute size of file based on target speed
+.TP
+\fB\-\-read_mam\fP
+read medium auxiliary memory then exit
 .TP
 \fB\-r\fP, \fB\-\-no-rewind\fP
 Do not rewind between test.

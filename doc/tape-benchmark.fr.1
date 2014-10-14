@@ -1,4 +1,4 @@
-.TH tape-benchmark 1 "October 1, 2014" "" "Tape Benchmark"
+.TH tape-benchmark 1 "15 October 2014" "" "Tape Benchmark"
 
 .SH NAME
 tape-benchmark \- Recherche de la meilleur taille de bloque avec un lecteur de bande
@@ -33,6 +33,12 @@ Première taille de bloque utilisé par le test. \fBTAILLE\fP doit être une pui
 .TP
 \fB\-s\fP, \fB\-\-size\fP=\fBTAILLE\fP
 \fBTAILLE\fP du fichier écrit par le test.
+.TP
+\fB\-S\fP, \fB\-\-target-size\fP=\fBSIZE\fP
+calcul la taille du fichier en se basant sur la vitesse espérée
+.TP
+\fB\-\-read_mam\fP
+lit la mémoire auxiliaire de la bande puis quit
 .TP
 \fB\-r\fP, \fB\-\-no-rewind\fP
 Ne pas rembobiner entre chaque test.
