@@ -1,7 +1,6 @@
 # French translations for tape-benchmark package.
 # Copyright (C) 2014 THE tape-benchmark'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the tape-benchmark package.
-# Automatically generated, 2014.
 #
 msgid   ""
 msgstr  "Project-Id-Version: v0.3.3-37-g20a62ec\n"
@@ -29,7 +28,7 @@ msgstr  "  -h, --help                   : affiche ceci et quit\n"
 #: src/tape-benchmark/tape-benchmark.c:141
 #, fuzzy, c-format
 msgid   "  -i, --inquiry              : inquiry tape drive\n"
-msgstr  "  -i, --inquiry                : questionne le lecteur\n"
+msgstr  "  -i, --inquiry                : questionne le lecteur de bande\n"
 
 #: src/tape-benchmark/tape-benchmark.c:143
 #, fuzzy, c-format
@@ -54,12 +53,12 @@ msgstr  "  -S, --target-size=TAILLE     : calcul la taille du fichier en se basa
 #: src/tape-benchmark/tape-benchmark.c:149
 #, fuzzy, c-format
 msgid   "      --read-mam             : read medium auxiliary memory then exit\n"
-msgstr  "      --read-mam              : lit la mémoire auxiliaire de la bande puis quit\n"
+msgstr  "      --read-mam               : lit la mémoire auxiliaire de la bande puis quit\n"
 
 #: src/tape-benchmark/tape-benchmark.c:150
 #, c-format
 msgid   "  -r, --no-rewind            : no rewind tape between step (default: rewind between step)\n"
-msgstr  "  -r, --no-rewind              : ne rembobine pas entre chaque étape (par défault: rembobine entre chaque étape)\n"
+msgstr  "  -r, --no-rewind              : ne rembobine pas entre chaque étape (par défaut: rembobine entre chaque étape)\n"
 
 #: src/tape-benchmark/tape-benchmark.c:151
 #, c-format
@@ -134,7 +133,7 @@ msgstr  "Erreur: la taille doit être un nombre positif\n"
 #: src/tape-benchmark/tape-benchmark.c:221
 #, fuzzy, c-format
 msgid   "Error: invalid target speed\n"
-msgstr  "Erreur: vitesse espérée invalide\n"
+msgstr  "Erreur: vitesse espérée est no invalide\n"
 
 #: src/tape-benchmark/tape-benchmark.c:226
 #, fuzzy, c-format
@@ -219,7 +218,7 @@ msgstr  "échec!!!, parce que %m\n"
 #: src/tape-benchmark/tape-benchmark.c:290
 #, fuzzy, c-format
 msgid   "Tape vendor: %s\n"
-msgstr  "Fabriquant du lecteur: %s\n"
+msgstr  "Fabricant du lecteur: %s\n"
 
 #: src/tape-benchmark/tape-benchmark.c:292
 #, c-format
@@ -244,7 +243,7 @@ msgstr  "Lecture de la mémoire auxiliaire de la bande… "
 #: src/tape-benchmark/tape-benchmark.c:308
 #, fuzzy, c-format
 msgid   "Vendor: %s\n"
-msgstr  "Fabriquant : %s\n"
+msgstr  "Fabricant : %s\n"
 
 #: src/tape-benchmark/tape-benchmark.c:312
 #, c-format
