@@ -72,8 +72,8 @@ $(1)_HEAD_FILES	:= $$(sort $$(shell test -d $${$(1)_SRC_DIR} && find $${$(1)_SRC
 $(1)_OBJ_FILES	:= $$(sort $$(patsubst src/%.c,${BUILD_DIR}/%.o,$${$(1)_SRC_FILES}))
 $(1)_DEP_FILES	:= $$(sort $$(shell test -d $${$(1)_DEPEND_DIR} && find $${$(1)_DEPEND_DIR} -name '*.d'))
 
-$(1)_LOCALE_FILES_PO	:= $$(sort $$(shell test -d locale && find -name $${$(1)_LOCALE}.*.po))
-$(1)_LOCALE_FILES_MO	:= $$(patsubst %.po,%.mo,$$($(1)_LOCALE_FILES_PO))
+$(1)_LOCALE_FILE_PO	:= $$(sort $$(shell test -d locale && find locale -name $${$(1)_LOCALE}.*.po))
+$(1)_LOCALE_FILE_MO	:= $$(patsubst %.po,%.mo,$$($(1)_LOCALE_FILE_PO))
 
 prepare_$(1): ${CHCKSUM_DIR}/$${$(1)_CHCKSUM_FILE}
 
@@ -85,7 +85,7 @@ locale/$$($(1)_LOCALE).pot: $$($(1)_SRC_FILES)
 	@echo " XGETTEXT  $${$(1)_LOCALE}.pot"
 	@xgettext -d $$($(1)_LOCALE) -o $$@ --from-code=UTF-8 -i -w 128 -s $$($(1)_SRC_FILES)
 
-$$($(1)_LOCALE_FILES_PO): locale/$$($(1)_LOCALE).pot
+$$($(1)_LOCALE_FILE_PO): locale/$$($(1)_LOCALE).pot
 	@echo " MSGMERGE  $$(@F)"
 	@msgmerge -q -F -U -i -w 128 $$@ $$<
 	@touch $$@
@@ -94,7 +94,7 @@ $$($(1)_LOCALE_FILES_PO): locale/$$($(1)_LOCALE).pot
 	@echo " MSGFMT    $$(@F)"
 	@msgfmt -f --check --output-file $$@ $$<
 
-$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES) $$($(1)_LOCALE_FILES_MO)
+$$($(1)_BIN): $$($(1)_DEPEND_LIB) $$($(1)_OBJ_FILES)
 	@echo " LD        $$@"
 	@${CC} -o $$@ $$($(1)_OBJ_FILES) ${LDFLAGS} $$($(1)_LD)
 #	@${OBJCOPY} --only-keep-debug $$@ $$@.debug
@@ -123,8 +123,8 @@ DEP_FILES	+= $$($(1)_DEP_FILES)
 OBJ_FILES	+= $$($(1)_OBJ_FILES)
 
 LOCALE_FILE		+= locale/$$($(1)_LOCALE).pot
-LOCALE_FILES_PO	+= $$($(1)_LOCALE_FILES_PO)
-LOCALE_FILES_MO	+= $$($(1)_LOCALE_FILES_MO)
+LOCALE_FILE_PO	+= $$($(1)_LOCALE_FILE_PO)
+LOCALE_FILE_MO	+= $$($(1)_LOCALE_FILE_MO)
 endef
 
 $(foreach prog,${BIN_SYMS},$(eval $(call BIN_template,${prog})))
@@ -138,9 +138,8 @@ DEP_DIRS	:= $(patsubst ${BUILD_DIR}/%,${DEPEND_DIR}/%,${OBJ_DIRS})
 # phony target
 .DEFAULT_GOAL	:= all
 .PHONY: all binaries clean clean-depend cscope ctags debug distclean install lib locales package prepare realclean stat stat-extra TAGS tar
-.NOTPARALLEL: prepare
 
-all: binaries cscope tags
+all: binaries locales cscope tags
 
 binaries: prepare $(sort ${BINS})
 
@@ -151,7 +150,7 @@ check:
 
 clean:
 	@echo ' RM        -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR}'
-	@rm -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR}
+	@rm -Rf $(foreach dir,${BIN_DIRS},$(word 1,$(subst /, ,$(dir)))) ${BUILD_DIR} ${LOCALE_FILE_MO}
 
 clean-depend:
 	@echo ' RM        -Rf depend'
@@ -166,8 +165,8 @@ debug: binaries
 	${GDB} bin/tape-benchmark
 
 distclean realclean: clean
-	@echo ' RM        -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILES_MO}'
-	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILES_MO}
+	@echo ' RM        -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILE_MO}'
+	@rm -Rf cscope.out ${CHCKSUM_DIR} ${DEPEND_DIR} tags ${VERSION_FILE} ${LOCALE_FILE_MO}
 
 doc: Doxyfile ${LIBOBJECT_SRC_FILES} ${HEAD_FILES}
 	@echo ' DOXYGEN'
@@ -183,7 +182,7 @@ install: all
 	@cp doc/tape-benchmark.fr.1 ${DESTDIR}/usr/share/man/fr/man1/tape-benchmark.1
 	@./script/copy-locales.pl ${DESTDIR}/usr/share/locale locale/*.mo
 
-locales: ${LOCALE_FILES}
+locales: ${LOCALE_FILE_MO}
 
 package:
 	@echo ' CLEAN'
